@@ -1298,44 +1298,34 @@ static const char g_Zombie_Summons[][] =
 	"npc_zs_fastheadcrab_zombie",
 
 	//wave 21-30 | 7-11
-	"npc_kamikaze_demo",
-	"npc_medic_main",
+	"npc_zs_kamikaze_demo",
+	"npc_zs_medic_healer",
+	"npc_zs_huntsman",
+	"npc_zs_zombie_demoknight",
+	"npc_zs_zombie_engineer",
+	"npc_zs_zombie_heavy",
 	"npc_zs_zombie_scout",
+	"npc_zs_zombie_sniper_jarate",
+	"npc_zs_zombie_soldier",
 	"npc_zs_zombie_soldier_pickaxe",
 	"npc_zs_zombie_spy",
+	"npc_zombie_pyro_giant_main",
 	"npc_zombie_scout_grave",
 	"npc_zombie_soldier_grave",
-	"npc_spy_half_cloacked_main",
-	"npc_sniper_main",
-	"npc_spy_trickstabber",
+	"npc_zombie_spy_grave",
 	"npc_zombie_demo_main",
-	"npc_agent_dick",
-	"npc_agent_ian",
-	"npc_agent_mike",
-	"npc_agent_sam",
+	"npc_zombie_heavy_grave",
 
 	//wave 31 | 12-16
-	"npc_agent_connor",
-	"npc_agent_henry",
-	"npc_agent_jeremy",
-	"npc_agent_kurt",
-	"npc_agent_logan",
-	"npc_agent_ross",
-	"npc_agent_spencer",
-	"npc_agent_todd",
 };
 
 static void Zombie_Spawning(int entity, int count)
 {
-	int summon = GetRandomInt(0, 14);
+	int summon = GetRandomInt(0, 16);
 	int wave = (Waves_GetRoundScale() + 1);
 	if(wave >= 20)
 	{
-		summon = GetRandomInt(15, 16);
-	}
-	if(wave >= 30)
-	{
-		summon = GetRandomInt(17, 18);
+		summon = GetRandomInt(17, 33);
 	}
 
 	char name[255];
