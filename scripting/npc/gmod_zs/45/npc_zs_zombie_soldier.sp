@@ -96,7 +96,7 @@ methodmap ZSoldierGrave < CClotBody
 	
 	public ZSoldierGrave(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSoldierGrave npc = view_as<ZSoldierGrave>(CClotBody(vecPos, vecAng, "models/player/soldier.mdl", "1.0", "2000", ally));
+		ZSoldierGrave npc = view_as<ZSoldierGrave>(CClotBody(vecPos, vecAng, "models/player/soldier.mdl", "1.0", "20000", ally));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -260,7 +260,7 @@ static int ZSoldierGrave_Work(ZSoldierGrave npc, float gameTime, int target, flo
 			WorldSpaceCenter(Enemy_I_See, vecTarget);
 			PredictSubjectPositionForProjectiles(npc, target, ProjectileSpeed, _,vecTarget);
 			npc.FaceTowards(vecTarget, 20000.0);
-			npc.FireRocket(vecTarget, 35.0, ProjectileSpeed);
+			npc.FireRocket(vecTarget, 500.0, ProjectileSpeed);
 			npc.PlayRangeSound();
 
 			npc.m_flNextRangedAttack=gameTime+2.0;
