@@ -62,7 +62,7 @@ void ZsSoldier_Barrager_OnMapStart_NPC()
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "Colonel Barrage");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_soldier_barrager");
-	data.Category = Type_GmodZS|MVM_CLASS_FLAG_MINIBOSS;
+	data.Category = MVM_CLASS_FLAG_MINIBOSS|MVM_CLASS_FLAG_ALWAYSCRIT;
 	data.Func = ClotSummon;
 	strcopy(data.Icon, sizeof(data.Icon), "soldier_burstfire"); 		//leaderboard_class_(insert the name)
 	data.IconCustom = false;													//download needed?
@@ -117,9 +117,12 @@ methodmap ZsSoldier_Barrager < CClotBody
 	}
 	public ZsSoldier_Barrager(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZsSoldier_Barrager npc = view_as<ZsSoldier_Barrager>(CClotBody(vecPos, vecAng, "models/player/Soldier.mdl", "1.35", "2000", ally));
+		ZsSoldier_Barrager npc = view_as<ZsSoldier_Barrager>(CClotBody(vecPos, vecAng, "models/player/Soldier.mdl", "1.35", "45000", ally));
 		
 		i_NpcWeight[npc.index] = 1;
+		
+		SetVariantInt(2);
+		AcceptEntityInput(npc.index, "SetBodyGroup");
 		
 		FormatEx(c_HeadPlaceAttachmentGibName[npc.index], sizeof(c_HeadPlaceAttachmentGibName[]), "head");
 		
@@ -251,53 +254,55 @@ static void Internal_ClotThink(int iNPC)
 	}
 
 	int max_ammo = 30;
-	bool close = (flDistanceToTarget < 60000);
-	
-	if(npc.m_iAmmo<=0 && !b_we_are_reloading[npc.index] && !close)	//the npc will prefer to fully reload the clip before attacking, unless the target is too close.
-	{
-		b_we_are_reloading[npc.index]=true;
-	}
-	if((b_we_are_reloading[npc.index] || (close && npc.m_iAmmo<=0)) && npc.m_flReloadIn<GameTime)	//Reload IF. Target too close. Empty clip.
-	{
-		npc.AddGesture("ACT_MP_RELOAD_STAND_PRIMARY");
-		npc.m_flReloadIn = 0.2 + GameTime;
-		npc.m_iAmmo++;
-		npc.m_flNextMeleeAttack = GameTime + 0.2;
-		npc.PlayRangedReloadSound();
-	}
-	if(fl_ruina_in_combat_timer[npc.index] <= GameTime && npc.m_flReloadIn<GameTime && !b_we_are_reloading[npc.index] && !close && npc.m_iAmmo<max_ammo)	//reload if not attacking/idle for long
-	{
-		npc.AddGesture("ACT_MP_RELOAD_STAND_PRIMARY");
-		npc.m_flReloadIn = 0.2 + GameTime;
-		npc.m_iAmmo++;
-		npc.m_flNextMeleeAttack = GameTime + 0.2;
-		npc.PlayRangedReloadSound();
-	}
-	if(npc.m_iAmmo>=max_ammo)	//npc will stop reloading once clip size is full.
-	{
-		b_we_are_reloading[npc.index]=false;
-	}
-	if((npc.m_iAmmo<=0 || b_we_are_reloading[npc.index]) && !close)	//Run away if ammo is 0 or we are reloading. Don't run if target is too close
-	{
-		npc.StartPathing();
-		
-		npc.m_flSpeed = 250.0;	//reloading is a hard job.
-		
-		int Enemy_I_See;
-	
-		Enemy_I_See = Can_I_See_Enemy(npc.index, PrimaryThreatIndex);
-		//Target close enough to hit
-		if(IsValidEnemy(npc.index, Enemy_I_See)) //Check if i can even see.
-		{
-			float vBackoffPos[3];
-			
-			BackoffFromOwnPositionAndAwayFromEnemy(npc, PrimaryThreatIndex,_,vBackoffPos);
-			
-			npc.SetGoalVector(vBackoffPos, true);
-		}
-	}
-	else if(flDistanceToTarget < 120000 && npc.m_iAmmo>0)
-	{
+    // bool close = (flDistanceToTarget < 60000); // 1. 거리 체크 변수 제거 (필요 시 주석 처리)
+    
+    // 장전 상태 결정: 탄약이 0이면 무조건 장전 모드로 진입
+    if(npc.m_iAmmo <= 0 && !b_we_are_reloading[npc.index])
+    {
+        b_we_are_reloading[npc.index] = true;
+    }
+
+    // 2. 긴급 장전 조건(close && npc.m_iAmmo<=0)이 제거된 장전 실행 로직
+    if(b_we_are_reloading[npc.index] && npc.m_flReloadIn < GameTime)
+    {
+        npc.AddGesture("ACT_MP_RELOAD_STAND_PRIMARY");
+        npc.m_flReloadIn = 0.2 + GameTime;
+        npc.m_iAmmo++;
+        npc.m_flNextMeleeAttack = GameTime + 0.2;
+        npc.PlayRangedReloadSound();
+    }
+
+    // 비전투 중 자동 장전 로직 (유지)
+    if(fl_ruina_in_combat_timer[npc.index] <= GameTime && npc.m_flReloadIn < GameTime && !b_we_are_reloading[npc.index] && npc.m_iAmmo < max_ammo)
+    {
+        npc.AddGesture("ACT_MP_RELOAD_STAND_PRIMARY");
+        npc.m_flReloadIn = 0.2 + GameTime;
+        npc.m_iAmmo++;
+        npc.m_flNextMeleeAttack = GameTime + 0.2;
+        npc.PlayRangedReloadSound();
+    }
+
+    if(npc.m_iAmmo >= max_ammo)
+    {
+        b_we_are_reloading[npc.index] = false;
+    }
+
+    // 3. 후퇴 로직 수정: 이제 적과의 거리에 상관없이(close 조건 제거) 탄약이 없으면 후퇴함
+    if(npc.m_iAmmo <= 0 || b_we_are_reloading[npc.index])
+    {
+        npc.StartPathing();
+        npc.m_flSpeed = 400.0;
+        
+        int Enemy_I_See = Can_I_See_Enemy(npc.index, PrimaryThreatIndex);
+        if(IsValidEnemy(npc.index, Enemy_I_See))
+        {
+            float vBackoffPos[3];
+            BackoffFromOwnPositionAndAwayFromEnemy(npc, PrimaryThreatIndex, _, vBackoffPos);
+            npc.SetGoalVector(vBackoffPos, true);
+        }
+    }
+    else if(flDistanceToTarget < 120000 && npc.m_iAmmo > 0)
+    {
 		npc.m_flSpeed = 270.0;
 		int Enemy_I_See;
 		

@@ -46,7 +46,7 @@ void Zsvulture_OnMapStart_NPC()
 	strcopy(data.Icon, sizeof(data.Icon), "pyro_armored2_1");
 	data.IconCustom = true;
 	data.Flags = 0;
-	data.Category = Type_GmodZS|MVM_CLASS_FLAG_MINIBOSS; 
+	data.Category = MVM_CLASS_FLAG_MINIBOSS|MVM_CLASS_FLAG_ALWAYSCRIT;
 	data.Func = ClotSummon;
 	NPC_Add(data);
 }
@@ -101,7 +101,7 @@ methodmap Zsvulture < CClotBody
 	
 	public Zsvulture(float vecPos[3], float vecAng[3], int ally)
 	{
-		Zsvulture npc = view_as<Zsvulture>(CClotBody(vecPos, vecAng, "models/player/pyro.mdl", "1.35", "6000", ally));
+		Zsvulture npc = view_as<Zsvulture>(CClotBody(vecPos, vecAng, "models/player/pyro.mdl", "1.35", "50000", ally));
 		
 		i_NpcWeight[npc.index] = 1;
 		FormatEx(c_HeadPlaceAttachmentGibName[npc.index], sizeof(c_HeadPlaceAttachmentGibName[]), "head");
@@ -117,13 +117,12 @@ methodmap Zsvulture < CClotBody
 		npc.m_iStepNoiseType = STEPSOUND_NORMAL;	
 		npc.m_iNpcStepVariation = STEPTYPE_NORMAL;
 		
-
 		func_NPCDeath[npc.index] = view_as<Function>(Zsvulture_NPCDeath);
 		func_NPCOnTakeDamage[npc.index] = view_as<Function>(Zsvulture_OnTakeDamage);
 		func_NPCThink[npc.index] = view_as<Function>(Zsvulture_ClotThink);
 		
 		npc.StartPathing();
-		npc.m_flSpeed = 330.0;
+		npc.m_flSpeed = 400.0;
 		npc.m_flMeleeArmor = 0.2;
 		npc.m_flRangedArmor = 1.5;
 		
@@ -381,17 +380,7 @@ public void Zsvulture_Rocket_Particle_StartTouch(int entity, int target)
 			DamageDeal *= h_BonusDmgToSpecialArrow[entity];
 
 
-		SDKHooks_TakeDamage(target, owner, inflictor, DamageDeal, DMG_BULLET|DMG_PREVENT_PHYSICS_FORCE, -1);	//acts like a kinetic rocket	
-		int flagsStun = 0;
-
-		if(Rogue_Paradox_RedMoon())
-			flagsStun |= TF_STUNFLAGS_LOSERSTATE;
-
-		if(!HasSpecificBuff(target, "Fluid Movement"))
-			flagsStun |= TF_STUNFLAG_SLOWDOWN;
-
-		if(target <= MaxClients)
-			TF2_StunPlayer(target, 0.6, 0.9, flagsStun);
+		SDKHooks_TakeDamage(target, owner, inflictor, DamageDeal, DMG_TRUEDAMAGE|DMG_PREVENT_PHYSICS_FORCE, -1);	//acts like a kinetic rocket
 		int particle = EntRefToEntIndex(i_WandParticle[entity]);
 		if(IsValidEntity(particle))
 		{

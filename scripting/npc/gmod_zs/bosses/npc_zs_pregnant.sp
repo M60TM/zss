@@ -185,8 +185,8 @@ public void Pregnant_ClotThink(int iNPC)
 					if(target > 0)
 					{
 						npc.PlayMeleeHitSound();
-						SDKHooks_TakeDamage(target, npc.index, npc.index, ShouldNpcDealBonusDamage(target) ? 1000.0 : 800.0, DMG_CLUB);
-						Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 100 : 50);
+						SDKHooks_TakeDamage(target, npc.index, npc.index, ShouldNpcDealBonusDamage(target) ? 1200.0 : 1000.0, DMG_CLUB);
+						Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 200 : 100);
 						// 800 x 0.5
 
 						Custom_Knockback(npc.index, target, 750.0);
