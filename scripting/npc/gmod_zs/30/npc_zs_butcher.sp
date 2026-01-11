@@ -126,6 +126,10 @@ methodmap Butcher < CClotBody
 		npc.m_iWearable1 = npc.EquipItem("R_Hand", "models/weapons/c_models/c_sd_cleaver/v_sd_cleaver.mdl");
 		SetVariantString("1.0");
 		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
+		
+		npc.m_iWearable2 = npc.EquipItem("R_Hand", "models/workshop/player/items/all_class/hwn2025_face_lift/hwn2025_face_lift_scout.mdl");
+		SetVariantString("1.0");
+		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
 
 		SetVariantInt(3);
 		AcceptEntityInput(npc.index, "SetBodyGroup");
