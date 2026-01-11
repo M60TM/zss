@@ -247,11 +247,27 @@ static char g_30wave[][] = {
 	"npc_medic_main",
 	"npc_zs_zombie_scout",
 	"npc_zs_zombie_soldier_pickaxe",
-	"npc_zs_zombie_spy",
+	"npc_zs_zombie_heavy",
 	"npc_zombie_soldier_grave",
 	"npc_sniper_main",
 	"npc_spy_half_cloacked_main",
 	"npc_zombie_demo_main",
+	"npc_zs_zombie_sniper_jarate",
+	"npc_zs_zombie_soldier",
+};
+
+static char g_40wave[][] = {
+	"npc_kamikaze_demo",
+	"npc_medic_main",
+	"npc_zs_zombie_scout",
+	"npc_zs_zombie_soldier_pickaxe",
+	"npc_zs_zombie_heavy",
+	"npc_zombie_soldier_grave",
+	"npc_sniper_main",
+	"npc_spy_half_cloacked_main",
+	"npc_zombie_demo_main",
+	"npc_zs_zombie_sniper_jarate",
+	"npc_zs_zombie_soldier",
 };
 public void Nest_ClotThink(int iNPC)
 {
@@ -314,31 +330,37 @@ public void Nest_ClotThink(int iNPC)
 
 				char EnemyToSpawn[255];
 				int randomIndex = GetRandomInt(0, sizeof(g_10wave) - 1);
+				int randomIndexa = GetRandomInt(0, sizeof(g_20wave) - 1);
+				int randomIndexb = GetRandomInt(0, sizeof(g_30wave) - 1);
+				int randomIndexc = GetRandomInt(0, sizeof(g_40wave) - 1);
 				strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_10wave[randomIndex]);
 				bool Construct = false;
 
 				if(GetTeam(iNPC) == TFTeam_Red)
 				{
-					IncreaseSpawnRates *= 2.0; //way slower.
+					IncreaseSpawnRates *= 1.0; //way slower.
 				}
 				
 				if(i_currentwave[iNPC] < 10)
 				{
-					IncreaseSpawnRates *= 1.2; //less swarm!
+					IncreaseSpawnRates *= 0.8;
 				}
 				else if(i_currentwave[iNPC] < 20)
 				{
-					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_20wave[randomIndex]);
+					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_20wave[randomIndexa]);
+					IncreaseSpawnRates *= 0.8;
 				}
 				else if(i_currentwave[iNPC] < 30)
 				{
 					//EnemyToSpawn = "npc_random_nest";
-					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_30wave[randomIndex]);
+					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_30wave[randomIndexb]);
+					IncreaseSpawnRates *= 0.8;
 				}
 				else if(i_currentwave[iNPC] < 40)
 				{
 					//EnemyToSpawn = "npc_random_nest";
 					IncreaseSpawnRates *= 0.75; //Swarm.
+					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_40wave[randomIndexc]);
 				}
 				
 				if(Rogue_Mode())
