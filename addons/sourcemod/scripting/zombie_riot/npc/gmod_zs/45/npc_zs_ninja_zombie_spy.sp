@@ -116,7 +116,7 @@ methodmap NinjaSpy < CClotBody
 
 	public NinjaSpy(float vecPos[3], float vecAng[3], int ally, const char[] data)
 	{
-		NinjaSpy npc = view_as<NinjaSpy>(CClotBody(vecPos, vecAng, "models/player/spy.mdl", "1.0", "25", ally, false, false, true));
+		NinjaSpy npc = view_as<NinjaSpy>(CClotBody(vecPos, vecAng, "models/player/spy.mdl", "1.0", "125", ally, false, false, true));
 		
 		i_NpcWeight[npc.index] = 1;
 		FormatEx(c_HeadPlaceAttachmentGibName[npc.index], sizeof(c_HeadPlaceAttachmentGibName[]), "head");
@@ -136,7 +136,7 @@ methodmap NinjaSpy < CClotBody
 		func_NPCOnTakeDamage[npc.index] = NinjaSpy_OnTakeDamage;
 		func_NPCThink[npc.index] = NinjaSpy_ClotThink;
 		
-		
+		npc.m_bCamo = true;
 		npc.StartPathing();
 		npc.m_flSpeed = 400.0;
 		b_TryToAvoidTraverse[npc.index] = true;

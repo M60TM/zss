@@ -109,7 +109,7 @@ methodmap ZSHeadcrabZombie < CClotBody
 	
 	public ZSHeadcrabZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSHeadcrabZombie npc = view_as<ZSHeadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/classic.mdl", "1.15", "2400", ally, false));
+		ZSHeadcrabZombie npc = view_as<ZSHeadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/classic.mdl", "1.15", "3200", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -127,7 +127,7 @@ methodmap ZSHeadcrabZombie < CClotBody
 		npc.m_flSpeed = 250.0;
 		func_NPCDeath[npc.index] = ZSHeadcrabZombie_NPCDeath;
 		func_NPCThink[npc.index] = ZSHeadcrabZombie_ClotThink;
-		func_NPCOnTakeDamage[npc.index] = Generic_OnTakeDamage;
+		func_NPCOnTakeDamage[npc.index] = ZSHeadcrabZombie_OnTakeDamage;
 
 		npc.StartPathing();
 		
@@ -221,9 +221,9 @@ public void ZSHeadcrabZombie_ClotThink(int iNPC)
 						{
 							{
 								if(!ShouldNpcDealBonusDamage(target))
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 150.0, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 160.0, DMG_CLUB, -1, _, vecHit);
 								else
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, vecHit);					
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 240.0, DMG_CLUB, -1, _, vecHit);					
 							}
 							
 							npc.PlayMeleeHitSound();

@@ -125,7 +125,7 @@ methodmap ZSPoisonheadcrabZombie < CClotBody
 	
 	public ZSPoisonheadcrabZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.15", "4800", ally));
+		ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.15", "10800", ally));
 		
 		i_NpcWeight[npc.index] = 2;
 		
@@ -256,10 +256,10 @@ public void ZSPoisonheadcrabZombie_ClotThink(int iNPC)
 								{
 									{
 										if(!ShouldNpcDealBonusDamage(target))
-										SDKHooks_TakeDamage(target, npc.index, npc.index, 200.0, DMG_CLUB, -1, _, vecHit);
+										SDKHooks_TakeDamage(target, npc.index, npc.index, 380.0, DMG_CLUB, -1, _, vecHit);
 									
 									else
-										SDKHooks_TakeDamage(target, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, vecHit);
+										SDKHooks_TakeDamage(target, npc.index, npc.index, 720.0, DMG_CLUB, -1, _, vecHit);
 										Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 50 : 10);
 									}
 									

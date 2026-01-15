@@ -85,7 +85,7 @@ methodmap Zsrunner < CSeaBody
 	
 	public Zsrunner(float vecPos[3], float vecAng[3], int ally, const char[] data)
 	{
-		Zsrunner npc = view_as<Zsrunner>(CClotBody(vecPos, vecAng, "models/zombie/classic.mdl", "1.15", data[0] ? "2000" : "1800", ally, false));
+		Zsrunner npc = view_as<Zsrunner>(CClotBody(vecPos, vecAng, "models/zombie/classic.mdl", "1.15", "800", ally, false));
 		// 2800 x 0.15
 		// 3600 x 0.15
 
@@ -185,7 +185,10 @@ public void Zsrunner_ClotThink(int iNPC)
 					if(target > 0) 
 					{
 						npc.PlayMeleeHitSound();
-						SDKHooks_TakeDamage(target, npc.index, npc.index, npc.m_bElite ? 90.0 : 100.0, DMG_CLUB);
+						if(!ShouldNpcDealBonusDamage(target))
+							SDKHooks_TakeDamage(target, npc.index, npc.index, 80.0, DMG_CLUB, -1, _, vecHit);
+						else
+							SDKHooks_TakeDamage(target, npc.index, npc.index, 120.0, DMG_CLUB, -1, _, vecHit);					
 						// 280 x 0.15
 						// 360 x 0.15
 					}

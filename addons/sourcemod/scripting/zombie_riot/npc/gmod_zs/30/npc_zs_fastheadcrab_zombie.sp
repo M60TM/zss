@@ -161,7 +161,7 @@ methodmap ZSFastheadcrabZombie < CClotBody
 	
 	public ZSFastheadcrabZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSFastheadcrabZombie npc = view_as<ZSFastheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/fast.mdl", "1.15", "1800", ally, false));
+		ZSFastheadcrabZombie npc = view_as<ZSFastheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/fast.mdl", "1.15", "2800", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -301,9 +301,9 @@ public void ZSFastheadcrabZombie_ClotThink(int iNPC)
 					if(target > 0) 
 					{
 						if(!ShouldNpcDealBonusDamage(target))
-							SDKHooks_TakeDamage(target, npc.index, npc.index, 30.0, DMG_CLUB, -1, _, vecHit);
+							SDKHooks_TakeDamage(target, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, vecHit);
 						else
-							SDKHooks_TakeDamage(target, npc.index, npc.index, 25.0, DMG_CLUB, -1, _, vecHit);
+							SDKHooks_TakeDamage(target, npc.index, npc.index, 60.0, DMG_CLUB, -1, _, vecHit);
 						
 						// Hit particle
 						

@@ -94,7 +94,7 @@ methodmap ElderGhoul < CClotBody
 	
 	public ElderGhoul(float vecPos[3], float vecAng[3], int ally)
 	{
-		ElderGhoul npc = view_as<ElderGhoul>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "2400", ally, false));
+		ElderGhoul npc = view_as<ElderGhoul>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "3200", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -205,7 +205,7 @@ public void ElderGhoul_ClotThink(int iNPC)
 						TR_GetEndPosition(vecHit, swingTrace);
 						if (target > 0) 
 						{
-							float damageAmount = ShouldNpcDealBonusDamage(target) ? 80.0 : 120.0;
+							float damageAmount = ShouldNpcDealBonusDamage(target) ? 100.0 : 120.0;
 							SDKHooks_TakeDamage(target, npc.index, npc.index, damageAmount, DMG_CLUB, -1, _, vecHit);
 							Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 45 : 10);
 							int flagsStun = 0;
@@ -213,7 +213,7 @@ public void ElderGhoul_ClotThink(int iNPC)
 										flagsStun |= TF_STUNFLAG_SLOWDOWN;
 
 							if(target <= MaxClients)
-								TF2_StunPlayer(target, 2, 0.5, flagsStun);
+								TF2_StunPlayer(target, 2.0, 0.5, flagsStun);
 							ApplyStatusEffect(npc.index, target, "Cellular Breakdown", 8.0);
 							npc.PlayMeleeHitSound();
 						}

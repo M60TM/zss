@@ -89,7 +89,7 @@ methodmap ZsSpitter < CSeaBody
 	
 	public ZsSpitter(float vecPos[3], float vecAng[3], int ally, const char[] data)
 	{
-		ZsSpitter npc = view_as<ZsSpitter>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", data[0] ? "2000" : "1200", ally, false));
+		ZsSpitter npc = view_as<ZsSpitter>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "800", ally, false));
 		// 4400 x 0.15
 		// 5000 x 0.15
 		
@@ -247,7 +247,7 @@ static Action zs_spitter_StartTouch(int entity, int target)
             
         float DamageDeal = fl_rocket_particle_dmg[entity];
         if(ShouldNpcDealBonusDamage(target))
-            DamageDeal *= 5.0
+            DamageDeal *= h_BonusDmgToSpecialArrow[entity];
         KillFeed_SetKillIcon(owner, "ball");
         SDKHooks_TakeDamage(target, owner, inflictor, DamageDeal, DMG_BULLET|DMG_PREVENT_PHYSICS_FORCE, -1);    //acts like a kinetic rocket    
         if(target <= MaxClients && !IsInvuln(target))

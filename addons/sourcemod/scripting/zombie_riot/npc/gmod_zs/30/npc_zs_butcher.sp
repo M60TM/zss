@@ -288,7 +288,7 @@ void ButcherSelfDefense(Butcher npc, float gameTime, int target, float distance)
 				if(IsValidEnemy(npc.index, target))
 				{
 					float damageDealt = 20.0;
-					if(ShouldNpcDealBonusDamage(target))
+					if(!ShouldNpcDealBonusDamage(target))
 						damageDealt *= 1.5;
 
 					SDKHooks_TakeDamage(target, npc.index, npc.index, damageDealt, DMG_CLUB, -1, _, vecHit);

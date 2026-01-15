@@ -255,10 +255,10 @@ public void ZSFortifiedGiantPoisonZombie_ClotThink(int iNPC)
 								{
 									
 									if(!ShouldNpcDealBonusDamage(target))
-										SDKHooks_TakeDamage(target, npc.index, npc.index, 150.0, DMG_CLUB, -1, _, vecHit);
+										SDKHooks_TakeDamage(target, npc.index, npc.index, 160.0, DMG_CLUB, -1, _, vecHit);
 									
 									else
-										SDKHooks_TakeDamage(target, npc.index, npc.index, 250.0, DMG_CLUB, -1, _, vecHit);
+										SDKHooks_TakeDamage(target, npc.index, npc.index, 240.0, DMG_CLUB, -1, _, vecHit);
 									// Hit particle
 									Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 500 : 500);
 									if(Armor_Charge[target] > 0)
