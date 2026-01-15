@@ -15,6 +15,8 @@ enum				// Types
 	Element_Warped,		// 9
 	Element_ManaOverflow,		// 10
 	Elemental_Pheromone, // 11
+
+	
 	Element_MAX
 }
 

@@ -247,7 +247,7 @@ static Action zs_spitter_StartTouch(int entity, int target)
             
         float DamageDeal = fl_rocket_particle_dmg[entity];
         if(ShouldNpcDealBonusDamage(target))
-            DamageDeal *= h_BonusDmgToSpecialArrow[entity];
+            DamageDeal *= 5.0
         KillFeed_SetKillIcon(owner, "ball");
         SDKHooks_TakeDamage(target, owner, inflictor, DamageDeal, DMG_BULLET|DMG_PREVENT_PHYSICS_FORCE, -1);    //acts like a kinetic rocket    
         if(target <= MaxClients && !IsInvuln(target))

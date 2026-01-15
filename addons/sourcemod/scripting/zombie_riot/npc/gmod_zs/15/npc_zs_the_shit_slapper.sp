@@ -155,7 +155,7 @@ methodmap ZSThe_Shit_Slapper < CClotBody
 		i_ammo_count[npc.index]=0;
 		
 		//IDLE
-		npc.m_flSpeed = 231.0;
+		npc.m_flSpeed = 150.0;
 		npc.m_flAttackHappenswillhappen = false;
 		npc.StartPathing();
 		
@@ -253,10 +253,10 @@ static void Internal_ClotThink(int iNPC)
 						if(target > 0) 
 						{
 							
-							float damage = 30.0;
+							float damage = 500.0;
 							if(iRuinaWave()>20)	//the shit slapper will become the most feard thing on the planet
 							{
-								damage=175.0;
+								damage=500.0;
 							}
 							SDKHooks_TakeDamage(target, npc.index, npc.index, damage*scale, DMG_CLUB, -1, _, vecHit);
 							i_ammo_count[npc.index]++;
@@ -273,7 +273,7 @@ static void Internal_ClotThink(int iNPC)
 							{
 								if(IsValidClient(target))
 								{
-									Custom_Knockback(npc.index, target, 250.0, true);
+									Custom_Knockback(npc.index, target, 500.0, true);
 									TF2_AddCondition(target, TFCond_LostFooting, 0.5);
 									TF2_AddCondition(target, TFCond_AirCurrent, 0.5);
 								}

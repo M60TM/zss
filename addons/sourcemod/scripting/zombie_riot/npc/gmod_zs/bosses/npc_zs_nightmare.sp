@@ -2,30 +2,30 @@
 #pragma newdecls required
  
 static const char g_DeathSounds[][] = {
-	"npc/antlion/pain1.wav",
-	"npc/antlion/pain2.wav",
+	"npc/barnacle/barnacle_die1.wav",
+	"npc/barnacle/barnacle_die2.wav",
 };
 
 static const char g_HurtSounds[][] = {
-	"npc/antlion/pain2.wav",
+    "npc/barnacle/barnacle_pull1.wav",
+	"npc/barnacle/barnacle_pull2.wav",
+	"npc/barnacle/barnacle_pull3.wav",
+	"npc/barnacle/barnacle_pull4.wav",
 };
 
 static const char g_IdleSounds[][] = {
-	"npc/antlion/idle1.wav",
-	"npc/antlion/idle2.wav",
-	"npc/antlion/idle3.wav",
-	"npc/antlion/idle4.wav",
-	"npc/antlion/idle5.wav",
+    "npc/barnacle/barnacle_crunch2.wav",
+	"npc/barnacle/neck_snap1.wav",
+	"npc/barnacle/neck_snap2.wav",
 };
 
 static const char g_MeleeHitSounds[][] = {
-	"npc/fast_zombie/claw_strike1.wav",
-	"npc/fast_zombie/claw_strike2.wav",
-	"npc/fast_zombie/claw_strike3.wav",
+	"npc/barnacle/barnacle_bark1.wav",
+	"npc/barnacle/barnacle_bark2.wav",
 };
 static const char g_MeleeAttackSounds[][] = {
-	"npc/zombie_poison/pz_warn1.wav",
-	"npc/zombie_poison/pz_warn2.wav",
+	"npc/zombie/zombie_hit.wav",
+	"npc/vort/foot_hit.wav",
 };
 
 static const char g_MeleeMissSounds[][] = {
@@ -33,7 +33,7 @@ static const char g_MeleeMissSounds[][] = {
 	"npc/fast_zombie/claw_miss2.wav",
 };
 
-public void ShadowWalker_OnMapStart_NPC()
+public void ZSNightmare_OnMapStart_NPC()
 {
 	for (int i = 0; i < (sizeof(g_DeathSounds));	   i++) { PrecacheSound(g_DeathSounds[i]);	   }
 	for (int i = 0; i < (sizeof(g_HurtSounds));		i++) { PrecacheSound(g_HurtSounds[i]);		}
@@ -43,11 +43,11 @@ public void ShadowWalker_OnMapStart_NPC()
 	for (int i = 0; i < (sizeof(g_MeleeMissSounds));   i++) { PrecacheSound(g_MeleeMissSounds[i]);   }
 
 	PrecacheSound("player/flow.wav");
-	PrecacheModel("models/zombie_riot/gmod_zs/corpse1/corpse1.mdl");
+	PrecacheModel("models/zombie_riot/gmod_zs/skeleton/skeleton.mdl");
 	NPCData data;
-	strcopy(data.Name, sizeof(data.Name), "Shadow Walker");
-	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_shadow_walker");
-	strcopy(data.Icon, sizeof(data.Icon), "gmod_zs_shadow_walker");
+	strcopy(data.Name, sizeof(data.Name), "Nightmare");
+	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_nightmare");
+	strcopy(data.Icon, sizeof(data.Icon), "");
 	data.IconCustom = true;
 	data.Flags = 0;
 	data.Category = Type_GmodZS;
@@ -57,15 +57,15 @@ public void ShadowWalker_OnMapStart_NPC()
 
 static any ClotSummon(int client, float vecPos[3], float vecAng[3], int team)
 {
-	return ShadowWalker(vecPos, vecAng, team);
+	return ZSNightmare(vecPos, vecAng, team);
 }
 
-methodmap ShadowWalker < CClotBody
+methodmap ZSNightmare < CClotBody
 {
 	public void PlayIdleSound() {
 		if(this.m_flNextIdleSound > GetGameTime(this.index))
 			return;
-		EmitSoundToAll(g_IdleSounds[GetRandomInt(0, sizeof(g_IdleSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(60, 66));
+		EmitSoundToAll(g_IdleSounds[GetRandomInt(0, sizeof(g_IdleSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(115, 125));
 		this.m_flNextIdleSound = GetGameTime(this.index) + GetRandomFloat(3.0, 6.0);
 	}
 	
@@ -75,15 +75,15 @@ methodmap ShadowWalker < CClotBody
 			
 		this.m_flNextHurtSound = GetGameTime(this.index) + 0.4;
 		
-		EmitSoundToAll(g_HurtSounds[GetRandomInt(0, sizeof(g_HurtSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(190, 200));
+		EmitSoundToAll(g_HurtSounds[GetRandomInt(0, sizeof(g_HurtSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(70, 75));
 	}
 	public void PlayDeathSound() {
 	
-		EmitSoundToAll(g_DeathSounds[GetRandomInt(0, sizeof(g_DeathSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(190, 200));
+		EmitSoundToAll(g_DeathSounds[GetRandomInt(0, sizeof(g_DeathSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(122, 128));
 		
 	}
 	public void PlayMeleeSound() {
-		EmitSoundToAll(g_MeleeAttackSounds[GetRandomInt(0, sizeof(g_MeleeAttackSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(180, 190));
+		EmitSoundToAll(g_MeleeAttackSounds[GetRandomInt(0, sizeof(g_MeleeAttackSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME, GetRandomInt(115, 140));
 	}
 	public void PlayMeleeHitSound() {
 		EmitSoundToAll(g_MeleeHitSounds[GetRandomInt(0, sizeof(g_MeleeHitSounds) - 1)], this.index, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
@@ -91,13 +91,10 @@ methodmap ShadowWalker < CClotBody
 	public void PlayMeleeMissSound() {
 		EmitSoundToAll(g_MeleeMissSounds[GetRandomInt(0, sizeof(g_MeleeMissSounds) - 1)], this.index, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
 	}
-	public void PlayRangedSound() {
-		EmitSoundToAll(g_MeleeMissSounds[GetRandomInt(0, sizeof(g_MeleeMissSounds) - 1)], this.index, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
-	}
 	
-	public ShadowWalker(float vecPos[3], float vecAng[3], int ally)
+	public ZSNightmare(float vecPos[3], float vecAng[3], int ally)
 	{
-		ShadowWalker npc = view_as<ShadowWalker>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "800", ally, false));
+		ZSNightmare npc = view_as<ZSNightmare>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/skeleton/skeleton.mdl", "1.15", "15000", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -106,40 +103,51 @@ methodmap ShadowWalker < CClotBody
 		int iActivity = npc.LookupActivity("ACT_HL2MP_WALK_ZOMBIE_01");
 		if(iActivity > 0) npc.StartActivity(iActivity);
 		
-
 		npc.m_flNextMeleeAttack = 0.0;
 		
 		npc.m_iBleedType = BLEEDTYPE_NORMAL;
 		npc.m_iStepNoiseType = STEPSOUND_NORMAL;	
 		npc.m_iNpcStepVariation = STEPTYPE_NORMAL;
 		
-		npc.m_flSpeed = 260.0;
-		func_NPCDeath[npc.index] = ShadowWalker_NPCDeath;
-		func_NPCThink[npc.index] = ShadowWalker_ClotThink;
+		SetEntityRenderColor(npc.index, 0, 0, 0, 255);
+		npc.m_flSpeed = 350.0;
+		func_NPCDeath[npc.index] = ZSNightmare_NPCDeath;
+		func_NPCThink[npc.index] = ZSNightmare_ClotThink;
 		func_NPCOnTakeDamage[npc.index] = Generic_OnTakeDamage;
 
-		npc.m_flMeleeArmor = 0.25;
-		npc.m_flRangedArmor = 1.0;
-
-		SetEntityRenderMode(npc.index, RENDER_TRANSCOLOR);
-		SetEntityRenderColor(npc.index, 51, 51, 51, 115);
-
-		npc.m_iWearable1 = npc.EquipItem("weapon_bone", "models/zombie_riot/gmod_zs/skeleton/skeleton.mdl");
-		SetVariantString("1.0");
-		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
-
-		SetEntityRenderMode(npc.m_iWearable1, RENDER_TRANSCOLOR);
-		SetEntityRenderColor(npc.m_iWearable1, 0, 0, 0, 255);
-
+        npc.m_flMeleeArmor = 0.8;
+		npc.m_flRangedArmor = 0.8;
+		
+		if(!IsValidEntity(RaidBossActive))
+		{
+			RaidBossActive = EntIndexToEntRef(npc.index);
+			RaidModeTime = GetGameTime(npc.index) + 9000.0;
+			RaidModeScaling = 0.0;
+			RaidAllowsBuildings = true;
+		}
+		
 		npc.StartPathing();
+		
+		EmitSoundToAll("npc/zombie_poison/pz_alert1.wav", _, _, _, _, 1.0);	
+		EmitSoundToAll("npc/zombie_poison/pz_alert1.wav", _, _, _, _, 1.0);	
+		for(int client_check=1; client_check<=MaxClients; client_check++)
+		{
+			if(IsClientInGame(client_check) && !IsFakeClient(client_check))
+			{
+				LookAtTarget(client_check, npc.index);
+				SetGlobalTransTarget(client_check);
+				ShowGameText(client_check, "voice_player", 1, "%t", "Nightmare Spawned");
+				UTIL_ScreenFade(client_check, 180, 1, FFADE_OUT, 0, 0, 0, 255);
+			}
+		}
 		
 		return npc;
 	}
 }
 
-public void ShadowWalker_ClotThink(int iNPC)
+public void ZSNightmare_ClotThink(int iNPC)
 {
-	ShadowWalker npc = view_as<ShadowWalker>(iNPC);
+	ZSNightmare npc = view_as<ZSNightmare>(iNPC);
 	
 	if(npc.m_flNextDelayTime > GetGameTime(npc.index))
 	{
@@ -220,10 +228,9 @@ public void ShadowWalker_ClotThink(int iNPC)
 						{
 							{
 								if(!ShouldNpcDealBonusDamage(target))
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 60.0, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 2500.0, DMG_CLUB, -1, _, vecHit);
 								else
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, vecHit);
-								ApplyStatusEffect(npc.index, target, "Cellular Breakdown", 8.0);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 1000.0, DMG_CLUB, -1, _, vecHit);					
 							}
 							
 							npc.PlayMeleeHitSound();
@@ -256,18 +263,11 @@ public void ShadowWalker_ClotThink(int iNPC)
 	npc.PlayIdleSound();
 }
 
-public void ShadowWalker_NPCDeath(int entity)
+public void ZSNightmare_NPCDeath(int entity)
 {
-	ShadowWalker npc = view_as<ShadowWalker>(entity);
+	ZSNightmare npc = view_as<ZSNightmare>(entity);
 	if(!npc.m_bGib)
 	{
 		npc.PlayDeathSound();	
 	}
-
-	if(IsValidEntity(npc.m_iWearable1))
-		RemoveEntity(npc.m_iWearable1);
-	if(IsValidEntity(npc.m_iWearable2))
-		RemoveEntity(npc.m_iWearable2);
-	if(IsValidEntity(npc.m_iWearable3))
-		RemoveEntity(npc.m_iWearable3);
 }

@@ -256,6 +256,56 @@ public void ZSHeadcrabZombie_ClotThink(int iNPC)
 	npc.PlayIdleSound();
 }
 
+public Action ZSHeadcrabZombie_OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3], int damagecustom)
+{
+	//Valid attackers only.
+	if(attacker <= 0)
+		return Plugin_Continue;
+
+	ZSHeadcrabZombie npc = view_as<ZSHeadcrabZombie>(victim);
+	if(!NpcStats_IsEnemySilenced(victim))
+	{
+		if(!npc.bXenoInfectedSpecialHurt)
+		{
+			npc.bXenoInfectedSpecialHurt = true;
+			npc.flXenoInfectedSpecialHurtTime = GetGameTime(npc.index) + 5.0;
+			SetEntityRenderMode(npc.index, RENDER_NORMAL);
+			SetEntityRenderColor(npc.index, 255, 165, 0, 255);
+			npc.m_flSpeed = 320.0;
+			CreateTimer(5.0, ZSHeadcrabZombie_Revert_Zombie_Resistance, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(10.0, ZSHeadcrabZombie_Revert_Zombie_Resistance_Enable, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
+		}
+	}
+	if (npc.m_flHeadshotCooldown < GetGameTime(npc.index))
+	{
+		npc.m_flHeadshotCooldown = GetGameTime(npc.index) + DEFAULT_HURTDELAY;
+		npc.m_blPlayHurtAnimation = true;
+	}
+	
+	return Plugin_Changed;
+}
+public Action ZSHeadcrabZombie_Revert_Zombie_Resistance(Handle timer, int ref)
+{
+	int zombie = EntRefToEntIndex(ref);
+	if(IsValidEntity(zombie))
+	{
+		SetEntityRenderMode(zombie, RENDER_NORMAL);
+		SetEntityRenderColor(zombie, 255, 255, 255, 255);
+	}
+	return Plugin_Handled;
+}
+
+public Action ZSHeadcrabZombie_Revert_Zombie_Resistance_Enable(Handle timer, int ref)
+{
+	int zombie = EntRefToEntIndex(ref);
+	if(IsValidEntity(zombie))
+	{
+		ZSHeadcrabZombie npc = view_as<ZSHeadcrabZombie>(zombie);
+		npc.bXenoInfectedSpecialHurt = false;
+	}
+	return Plugin_Handled;
+}
+
 public void ZSHeadcrabZombie_NPCDeath(int entity)
 {
 	ZSHeadcrabZombie npc = view_as<ZSHeadcrabZombie>(entity);

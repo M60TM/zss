@@ -161,7 +161,7 @@ methodmap ZSFastZombie < CClotBody
 	
 	public ZSFastZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSFastZombie npc = view_as<ZSFastZombie>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/fast/fast.mdl", "1.15", "600", ally, false));
+		ZSFastZombie npc = view_as<ZSFastZombie>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/fast/fast.mdl", "1.15", "700", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -169,8 +169,6 @@ methodmap ZSFastZombie < CClotBody
 		
 		int iActivity = npc.LookupActivity("ACT_HL2MP_RUN_ZOMBIE_FAST");
 		if(iActivity > 0) npc.StartActivity(iActivity);
-		
-		
 		
 		npc.m_iBleedType = BLEEDTYPE_NORMAL;
 		npc.m_iStepNoiseType = STEPSOUND_NORMAL;	
@@ -300,7 +298,7 @@ public void ZSFastZombie_ZSFastZombieThink(int iNPC)
 					if(target > 0) 
 					{
 						if(!ShouldNpcDealBonusDamage(target))
-							SDKHooks_TakeDamage(target, npc.index, npc.index, 25.0, DMG_CLUB, -1, _, vecHit);
+							SDKHooks_TakeDamage(target, npc.index, npc.index, 40.0, DMG_CLUB, -1, _, vecHit);
 						else
 							SDKHooks_TakeDamage(target, npc.index, npc.index, 20.0, DMG_CLUB, -1, _, vecHit);
 						

@@ -127,7 +127,7 @@ methodmap Butcher < CClotBody
 		SetVariantString("1.0");
 		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
 		
-		npc.m_iWearable2 = npc.EquipItem("R_Hand", "models/workshop/player/items/all_class/hwn2025_face_lift/hwn2025_face_lift_scout.mdl");
+		npc.m_iWearable2 = npc.EquipItem("R_Hand", "models/workshop/player/items/all_class/hwn2021_goalkeeper/hwn2021_goalkeeper_scout.mdl");
 		SetVariantString("1.0");
 		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
 

@@ -53,7 +53,7 @@ static const char g_MeleeMissSounds[][] = {
 static float f_PlayerScalingBuilding;
 static int i_currentwave[MAXENTITIES];
 static bool AllyIsBoundToVillage[MAXENTITIES];
-static int NPCId;
+//static int NPCId;
 
 /*
 void ResetBoundNestAlly(int entity)
@@ -81,15 +81,15 @@ void Nest_OnMapStart_NPC()
 	data.Flags = MVM_CLASS_FLAG_ALWAYSCRIT;
 	data.Category = Type_GmodZS;
 	data.Func = ClotSummon;
-	NPCId = NPC_Add(data);
+	NPC_Add(data);
 }
 
-
+/*
 int Nest_Id()
 {
 	return NPCId;
 }
-
+*/
 
 static any ClotSummon(int client, float vecPos[3], float vecAng[3], int team, const char[] data)
 {

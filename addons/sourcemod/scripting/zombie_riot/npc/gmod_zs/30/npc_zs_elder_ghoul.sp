@@ -213,8 +213,8 @@ public void ElderGhoul_ClotThink(int iNPC)
 										flagsStun |= TF_STUNFLAG_SLOWDOWN;
 
 							if(target <= MaxClients)
-								TF2_StunPlayer(target, 1.2, 0.5, flagsStun);
-							ApplyStatusEffect(npc.index, target, "Cellular Breakdown", 15.0);
+								TF2_StunPlayer(target, 2, 0.5, flagsStun);
+							ApplyStatusEffect(npc.index, target, "Cellular Breakdown", 8.0);
 							npc.PlayMeleeHitSound();
 						}
 						else

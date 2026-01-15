@@ -176,7 +176,7 @@ methodmap ZSFastheadcrabZombie < CClotBody
 		
 		func_NPCDeath[npc.index] = ZSFastheadcrabZombie_NPCDeath;
 		func_NPCThink[npc.index] = ZSFastheadcrabZombie_ClotThink;	
-		func_NPCOnTakeDamage[npc.index] = Generic_OnTakeDamage;	
+		func_NPCOnTakeDamage[npc.index] = ZSFastheadcrabZombie_OnTakeDamage;	
 		
 		
 		//IDLE
@@ -331,6 +331,40 @@ public void ZSFastheadcrabZombie_ClotThink(int iNPC)
 		npc.m_iTarget = GetClosestTarget(npc.index);
 	}
 	npc.PlayIdleAlertSound();
+}
+
+public Action ZSFastheadcrabZombie_OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3], int damagecustom)
+{
+	//Valid attackers only.
+	if(attacker <= 0)
+		return Plugin_Continue;
+		
+	ZSFastheadcrabZombie npc = view_as<ZSFastheadcrabZombie>(victim);
+	
+	if(!NpcStats_IsEnemySilenced(victim))
+	{
+		if(!npc.bXenoInfectedSpecialHurt)
+		{
+			npc.bXenoInfectedSpecialHurt = true;
+			damage = 0.0;
+			EmitSoundToAll("physics/metal/metal_box_impact_bullet1.wav", attacker, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, 0.5);
+			return Plugin_Changed;
+		}
+	}
+	
+	/*
+	if(attacker > MaxClients && !IsValidEnemy(npc.index, attacker))
+		return Plugin_Continue;
+	*/
+	
+	if (npc.m_flHeadshotCooldown < GetGameTime(npc.index))
+	{
+		npc.m_flHeadshotCooldown = GetGameTime(npc.index) + DEFAULT_HURTDELAY;
+		npc.PlayHurtSound();
+		
+	}
+	
+	return Plugin_Changed;
 }
 
 public void ZSFastheadcrabZombie_NPCDeath(int entity)

@@ -179,16 +179,8 @@ methodmap ZsSoldier_Barrager < CClotBody
 		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
 		
 		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
-		
-		SetEntityRenderColor(npc.index, 125, 100, 100, 255);
-		
-		SetEntityRenderColor(npc.m_iWearable1, 125, 100, 100, 255);
-		
-		SetEntityRenderColor(npc.m_iWearable2, 125, 100, 100, 255);
-		
-		SetEntityRenderColor(npc.m_iWearable3, 125, 100, 100, 255);
-		
-		SetEntityRenderColor(npc.m_iWearable4, 125, 100, 100, 255);
+		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
+		SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", 1);
 		
 		npc.StartPathing();
 		

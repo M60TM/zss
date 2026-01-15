@@ -123,9 +123,6 @@ methodmap ZSPoisonheadcrabZombie < CClotBody
 		
 	}
 	
-	
-	
-	
 	public ZSPoisonheadcrabZombie(float vecPos[3], float vecAng[3], int ally)
 	{
 		ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.15", "4800", ally));
@@ -315,7 +312,32 @@ public Action ZSPoisonheadcrabZombie_OnTakeDamage(int victim, int &attacker, int
 		return Plugin_Continue;
 		
 	ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(victim);
-	
+	if(!NpcStats_IsEnemySilenced(victim))
+	{
+		if(!npc.bXenoInfectedSpecialHurt)
+		{
+			npc.bXenoInfectedSpecialHurt = true;
+			npc.flXenoInfectedSpecialHurtTime = GetGameTime(npc.index) + 2.0;
+			SetEntityRenderMode(npc.index, RENDER_TRANSCOLOR);
+			SetEntityRenderColor(npc.index, 150, 255, 150, 65);
+			CreateTimer(2.0, ZSPoisonZombie_Revert_ZSPoisonheadcrabZombie_Resistance, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(10.0, ZSPoisonZombie_Revert_ZSPoisonheadcrabZombie_Resistance_Enable, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
+		}
+		float TrueArmor = 1.0;
+		if(!NpcStats_IsEnemySilenced(victim))
+		{
+			if(fl_TotalArmor[npc.index] == 1.0)
+			{
+				if(npc.flXenoInfectedSpecialHurtTime > GetGameTime(npc.index))
+				{
+					TrueArmor *= 0.25;
+					fl_TotalArmor[npc.index] = TrueArmor;
+					OnTakeDamageNpcBaseArmorLogic(victim, attacker, damage, damagetype, true);
+				}
+			}
+		}
+		fl_TotalArmor[npc.index] = TrueArmor;
+	}
 	/*
 	if(attacker > MaxClients && !IsValidEnemy(npc.index, attacker))
 		return Plugin_Continue;
@@ -328,6 +350,28 @@ public Action ZSPoisonheadcrabZombie_OnTakeDamage(int victim, int &attacker, int
 	}
 	
 	return Plugin_Changed;
+}
+
+public Action ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance(Handle timer, int ref)
+{
+	int zombie = EntRefToEntIndex(ref);
+	if(IsValidEntity(zombie))
+	{
+		SetEntityRenderMode(zombie, RENDER_NORMAL);
+		SetEntityRenderColor(zombie, 255, 255, 255, 255);
+	}
+	return Plugin_Handled;
+}
+
+public Action ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance_Enable(Handle timer, int ref)
+{
+	int zombie = EntRefToEntIndex(ref);
+	if(IsValidEntity(zombie))
+	{
+		ZSPoisonZombie npc = view_as<ZSPoisonZombie>(zombie);
+		npc.bXenoInfectedSpecialHurt = false;
+	}
+	return Plugin_Handled;
 }
 
 public void ZSPoisonheadcrabZombie_NPCDeath(int entity)

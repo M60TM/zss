@@ -1016,53 +1016,7 @@ void NPC_ConfigSetup()
 	Diversionistico_Elitus_OnMapStart_NPC();
 	Construction_Raid_Zilius_OnMapStart();
 	ZeinaPrisoner_OnMapStart_NPC();
-	
-	// Gmod ZS
-	ZSZombie_OnMapStart_NPC();
-	ZSHeadcrab_OnMapStart_NPC();
-	Ghoul_OnMapStart_NPC();
-	ZSPoisonZombie_OnMapStart_NPC();
-	ZSPoisonHeadcrab_MapStart();
-	ZSFortifiedGiantPoisonZombie_OnMapStart_NPC();
-	Butcher_OnMapStart_NPC();
-	ZSThe_Shit_Slapper_OnMapStart_NPC();
-	BloatedZombie_OnMapStart_NPC();
-	ZSFastZombie_OnMapStart_NPC();
-	Skeleton_OnMapStart_NPC();
-	ShadowWalker_OnMapStart_NPC();
-	ElderGhoul_OnMapStart_NPC();
-	GoreBlaster_OnMapStart_NPC();
-	Bastardzine_OnMapStart_NPC();
-	FastHeadcrab_OnMapStart_NPC();
-	VileBloatedZombie_OnMapStart_NPC();
-	FleshCreeper_OnMapStart_NPC();
-	Nest_OnMapStart_NPC();
-	ZSZmain_OnMapStart_NPC();
-	ZombieSummonRandom_OnMapStart_NPC();
-	Amplification_Precache();
-	Pregnant_Precache();
-	ZSHeadcrabZombie_OnMapStart_NPC();
-	ZSFastheadcrabZombie_OnMapStart_NPC();
-	NestSummonRandom_OnMapStart_NPC();
-	ZsSpitter_Precache();
-	Zsrunner_Precache();
-	ZSsoldierOnMapStart();
-	ZsSpy_OnMapStart_NPC();
-	ZSscout_OnMapStart_NPC();
-	InfectedHeavy_Precache();
-	Zsvulture_OnMapStart_NPC();
-	ZsSoldier_Barrager_OnMapStart_NPC();
-	ZSoldierGrave_OnMapStart_NPC();
-	InfectedSniperjarate_Precache();
-	NinjaSpy_OnMapStart_NPC();
-	ZsUnspeakable_OnMapStart_NPC();
-	InfectedDemoMain_OnMapStart_NPC();
-	InfectedKamikaze_OnMapStart_NPC();
-	InfectedEngineer_OnMapStart_NPC();
-	Allymedic_OnMapStart_NPC();
-	Allysoldier_OnMapStart_NPC();
-	Allyheavy_OnMapStart_NPC();
-	AllySniper_OnMapStart_NPC();
+
 
 	//Aperture
 	ApertureCombatant_OnMapStart_NPC();
@@ -1213,6 +1167,57 @@ void NPC_ConfigSetup()
 	SkilledCrossbowmanOnMapStart();
 	DemonDevoterOnMapStart();
 	DungeonLoot_MapStart();
+	
+	// Gmod ZS
+	ZSZombie_OnMapStart_NPC();
+	ZSHeadcrab_OnMapStart_NPC();
+	Ghoul_OnMapStart_NPC();
+	ZSPoisonZombie_OnMapStart_NPC();
+	ZSPoisonHeadcrab_MapStart();
+	ZSFortifiedGiantPoisonZombie_OnMapStart_NPC();
+	Butcher_OnMapStart_NPC();
+	ZSThe_Shit_Slapper_OnMapStart_NPC();
+	BloatedZombie_OnMapStart_NPC();
+	ZSFastZombie_OnMapStart_NPC();
+	Skeleton_OnMapStart_NPC();
+	ShadowWalker_OnMapStart_NPC();
+	ElderGhoul_OnMapStart_NPC();
+	GoreBlaster_OnMapStart_NPC();
+	Bastardzine_OnMapStart_NPC();
+	FastHeadcrab_OnMapStart_NPC();
+	VileBloatedZombie_OnMapStart_NPC();
+	FleshCreeper_OnMapStart_NPC();
+	Nest_OnMapStart_NPC();
+	ZSZmain_OnMapStart_NPC();
+	ZombieSummonRandom_OnMapStart_NPC();
+	Amplification_Precache();
+	Pregnant_Precache();
+	ZSHeadcrabZombie_OnMapStart_NPC();
+	ZSFastheadcrabZombie_OnMapStart_NPC();
+	NestSummonRandom_OnMapStart_NPC();
+	ZsSpitter_Precache();
+	Zsrunner_Precache();
+	ZSsoldierOnMapStart();
+	ZsSpy_OnMapStart_NPC();
+	ZSscout_OnMapStart_NPC();
+	InfectedHeavy_Precache();
+	Zsvulture_OnMapStart_NPC();
+	ZsSoldier_Barrager_OnMapStart_NPC();
+	ZSoldierGrave_OnMapStart_NPC();
+	InfectedSniperjarate_Precache();
+	NinjaSpy_OnMapStart_NPC();
+	ZsUnspeakable_OnMapStart_NPC();
+	InfectedDemoMain_OnMapStart_NPC();
+	InfectedKamikaze_OnMapStart_NPC();
+	InfectedEngineer_OnMapStart_NPC();
+	ZSSphynx_OnMapStart_NPC();
+	ZSNightmare_OnMapStart_NPC();
+	ZSMedicHealer_OnMapStart_NPC();
+	ZSHuntsman_OnMapStart_NPC();
+	Allymedic_OnMapStart_NPC();
+	Allysoldier_OnMapStart_NPC();
+	Allyheavy_OnMapStart_NPC();
+	AllySniper_OnMapStart_NPC();
 }
 
 void NPC_MapEnd()
@@ -2627,12 +2632,16 @@ Action NpcSpecificOnTakeDamage(int victim, int &attacker, int &inflictor, float 
 #include "npc/gmod_zs/45/npc_zs_zombie_demoknight.sp"
 #include "npc/gmod_zs/45/npc_zs_kamikaze_demo.sp"
 #include "npc/gmod_zs/45/npc_zs_zombie_engineer.sp"
+#include "npc/gmod_zs/45/npc_zs_medic_healer.sp"
+#include "npc/gmod_zs/45/npc_zs_huntsman.sp"
 #include "npc/gmod_zs/npc_zs_zmain.sp"
 #include "npc/gmod_zs/special/npc_zs_flesh_creeper.sp"
 #include "npc/gmod_zs/special/npc_zs_nest.sp"
 #include "npc/gmod_zs/special/npc_random_nest.sp"
 #include "npc/gmod_zs/special/npc_random_zombie.sp"
 #include "npc/gmod_zs/special/npc_zs_amplification.sp"
+#include "npc/gmod_zs/bosses/npc_zs_nightmare.sp"
+#include "npc/gmod_zs/bosses/npc_zs_sphynx.sp"
 #include "npc/gmod_zs/bosses/npc_zs_pregnant.sp"
 #include "npc/gmod_zs/bosses/npc_major_vulture.sp"
 #include "npc/gmod_zs/bosses/npc_zs_soldier_barrager.sp"

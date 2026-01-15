@@ -122,9 +122,6 @@ methodmap ZSFortifiedGiantPoisonZombie < CClotBody
 		
 	}
 	
-	
-	
-	
 	public ZSFortifiedGiantPoisonZombie(float vecPos[3], float vecAng[3], int ally)
 	{
 		ZSFortifiedGiantPoisonZombie npc = view_as<ZSFortifiedGiantPoisonZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.75", "15000", ally, false, true));
@@ -264,6 +261,12 @@ public void ZSFortifiedGiantPoisonZombie_ClotThink(int iNPC)
 										SDKHooks_TakeDamage(target, npc.index, npc.index, 250.0, DMG_CLUB, -1, _, vecHit);
 									// Hit particle
 									Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 500 : 500);
+									if(Armor_Charge[target] > 0)
+									{
+										Armor_Charge[target]=0;
+										f_Armor_BreakSoundDelay[target] = GetGameTime() + 5.0;	
+										EmitSoundToClient(target, "npc/assassin/ball_zap1.wav", target, SNDCHAN_STATIC, 60, _, 1.0, GetRandomInt(95,105));
+									}
 									// Hit sound
 									npc.PlayMeleeHitSound();
 									

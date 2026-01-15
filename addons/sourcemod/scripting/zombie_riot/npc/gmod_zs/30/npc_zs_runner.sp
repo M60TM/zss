@@ -108,7 +108,7 @@ methodmap Zsrunner < CSeaBody
 		func_NPCOnTakeDamage[npc.index] = Zsrunner_OnTakeDamage;
 		func_NPCThink[npc.index] = Zsrunner_ClotThink;
 		
-		npc.m_flSpeed = 300.0;	// 1.1 x 250
+		npc.m_flSpeed = 350.0;	// 1.1 x 250
 		npc.m_flGetClosestTargetTime = 0.0;
 		npc.m_flNextMeleeAttack = 0.0;
 		npc.m_flAttackHappens = 0.0;

@@ -589,7 +589,7 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 	if(LastMann && !AlreadySaidLastmann)
 	{
 		AlreadySaidLastmann = true;
-		CPrintToChatAll("{purple}저것이... 활짝 웃기 시작한다.");
+		CPrintToChatAll("{red}저것이... 활짝 웃기 시작한다.");
 	}
 	if(!npc.m_flMaxDeath && RaidModeTime < GetGameTime())
 	{
@@ -597,7 +597,7 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 	//	ForcePlayerLoss();
 	//	RaidBossActive = INVALID_ENT_REFERENCE;
 	//	func_NPCThink[npc.index] = INVALID_FUNCTION;
-		CPrintToChatAll("{purple}저것이 당신의 무능함을 비웃고 있다...");
+		CPrintToChatAll("{red}저것이 당신의 무능함을 비웃고 있다...");
 		SetEntPropFloat(npc.index, Prop_Send, "m_flModelScale", 1.85);
 		RaidModeScaling *= 5.0;
 		fl_Extra_Speed[npc.index] *= 2.0;
@@ -706,7 +706,7 @@ public Action ZsUnspeakable_OnTakeDamage(int victim, int &attacker, int &inflict
 			npc.m_bAlliesSummoned = true;
 			Spawn_Zombie(npc);
 		}
-		CPrintToChatAll("{purple}저것이 분노했다.");
+		CPrintToChatAll("{red}저것이 분노했다.");
 		RaidModeScaling *= 1.1;
 	}
 	if(npc.g_TimesSummoned < 3)
@@ -732,11 +732,11 @@ public Action ZsUnspeakable_OnTakeDamage(int victim, int &attacker, int &inflict
 			{
 				case 1:
 				{
-					CPrintToChatAll("{purple}저것이 고통에 움츠러들었다.");
+					CPrintToChatAll("{red}저것이 고통에 움츠러들었다.");
 				}
 				case 2:
 				{
-					CPrintToChatAll("{purple}저것이 고통스럽게 비명을 지르고 있다.");
+					CPrintToChatAll("{red}저것이 고통스럽게 비명을 지르고 있다.");
 				}
 			}
 		}
@@ -770,7 +770,7 @@ static void Spawn_Zombie(ZsUnspeakable npc)
 	maxhealth= (heck/10);
 	if(i_RaidGrantExtra[npc.index] >= 4)	//Only spawns if the wave is 60 or beyond.
 	{
-		CPrintToChatAll("{green} 저것이 끔찍한 감염체들을 소환했다.", NpcStats_ReturnNpcName(npc.index, true));
+		CPrintToChatAll("{red} 저것이 끔찍한 감염체들을 소환했다.", NpcStats_ReturnNpcName(npc.index, true));
 		maxhealth= (heck/5);	//mid squishy
 
 		spawn_index = NPC_CreateByName("npc_major_vulture", npc.index, pos, ang, GetTeam(npc.index));
@@ -1094,7 +1094,7 @@ public void ZsUnspeakable_NPCDeath(int entity)
 	}
 	if(i_RaidGrantExtra[npc.index] == 6)
 	{
-		CPrintToChatAll("{purple}돌려보내야한다...");
+		CPrintToChatAll("{red}돌려보내야한다...");
 		CPrintToChatAll("{darkgray}그림자 응달{default}: 윽... 내 머릿속의 음성이 떠나가질 않아.");	
 	}
 	if(IsValidEntity(npc.m_iWearable8))
@@ -1306,7 +1306,7 @@ public void ZsUnspeakableWin(int entity)
 
 	AlreadySaidWin = true;
 	//b_NpcHasDied[client]
-	CPrintToChatAll("{purple}이곳의 모든 것을 파괴한 그것은, 다른 지역을 공격할 준비를 하고 있다.");
+	CPrintToChatAll("{red}이곳의 모든 것을 파괴한 그것은, 다른 지역을 공격할 준비를 하고 있다.");
 	CPrintToChatAll("{crimson}다음 파괴 대상은 아를린의 나머지 지역들이었다.");
 }
 
@@ -1357,19 +1357,19 @@ void ZsUnspeakable_DeathAnimationKahml(ZsUnspeakable npc, float gameTime)
 			{
 				case 11:
 				{
-					CPrintToChatAll("{purple}어리석은 필멸자들아, 우리를 막을 수 있을 것 같으냐?");
+					CPrintToChatAll("{red}어리석은 필멸자들아, 우리를 막을 수 있을 것 같으냐?");
 				}
 				case 12:
 				{
-					CPrintToChatAll("{purple}네가 할 수 있는건 아무것도 없다...");
+					CPrintToChatAll("{red}네가 할 수 있는건 아무것도 없다...");
 				}
 				case 13:
 				{
-					CPrintToChatAll("{purple}지금 여기에서 모든 시대의 종말을 목격해라...");
+					CPrintToChatAll("{red}지금 여기에서 모든 시대의 종말을 목격해라...");
 				}
 				case 14:
 				{
-					CPrintToChatAll("{purple}공허와 하나가 되어라...");
+					CPrintToChatAll("{red}공허와 하나가 되어라...");
 				}
 			}
 		}
@@ -1379,22 +1379,22 @@ void ZsUnspeakable_DeathAnimationKahml(ZsUnspeakable npc, float gameTime)
 			{
 				case 11:
 				{
-					CPrintToChatAll("{purple}더 이상 참을 수 없다... 여기 있는 놈들을 전부 죽여주마...");
+					CPrintToChatAll("{red}더 이상 참을 수 없다... 여기 있는 놈들을 전부 죽여주마...");
 					CPrintToChatAll("{black}이잔 :{default} 날 붙잡고 있어! 안 돼..!");
 				}
 				case 12:
 				{
-					CPrintToChatAll("{purple}그림자, 너..., 자신을 이잔이라고 부르는 하찮은 쓰레기.");
+					CPrintToChatAll("{red}그림자, 너..., 자신을 이잔이라고 부르는 하찮은 쓰레기.");
 					CPrintToChatAll("{black}이잔 :{default} ....");
 				}
 				case 13:
 				{
-					CPrintToChatAll("{purple}내가 죽는건 아무 상관 없다... 이건 공허를 위한 더 큰 발걸음이다. 움브랄이 되지 않기 위해, 자연과 하나가 되지 않기 위해...");
+					CPrintToChatAll("{red}내가 죽는건 아무 상관 없다... 이건 공허를 위한 더 큰 발걸음이다. 움브랄이 되지 않기 위해, 자연과 하나가 되지 않기 위해...");
 					CPrintToChatAll("{black}이잔 :{default} 혼돈은-");
 				}
 				case 14:
 				{
-					CPrintToChatAll("{purple}공허가 무너지는 것을 막으려면 네 놈들이 죽어야만 한다...!");
+					CPrintToChatAll("{red}공허가 무너지는 것을 막으려면 네 놈들이 죽어야만 한다...!");
 					CPrintToChatAll("{black}이잔 :{default} 그 놈들이 만든거야-");
 				}
 				case 15:

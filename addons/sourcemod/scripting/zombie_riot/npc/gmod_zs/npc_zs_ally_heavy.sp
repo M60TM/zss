@@ -132,7 +132,7 @@ methodmap Allyheavy < CClotBody
 		int skin = 0;
 		SetEntProp(npc.index, Prop_Send, "m_nSkin", skin);
 
-		npc.m_iWearable1 = npc.EquipItem("head", "models/weapons/c_models/c_minigun/c_minigun.mdl");
+		npc.m_iWearable1 = npc.EquipItem("head", "models/weapons/c_models/c_minigun/c_minigun_natascha.mdl");
 		SetVariantString("1.0");
 		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
 		
@@ -165,13 +165,6 @@ public void Allyheavy_ClotThink(int iNPC)
 	npc.m_flNextDelayTime = gametime + DEFAULT_UPDATE_DELAY_FLOAT;
 	npc.Update();
 	
-	float VecSelfNpcabs[3]; GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", VecSelfNpcabs);
-	Allyheavy_ApplyBuffInLocation_Optimized(VecSelfNpcabs, GetTeam(npc.index), npc.index);
-	float Range = ALLYHEAVY_RANGE;
-	spawnRing_Vectors(VecSelfNpcabs, Range * 2.0, 0.0, 0.0, 10.0, "materials/sprites/laserbeam.vmt", 255, 50, 50, 200, 1, /*duration*/ 0.11, 3.0, 5.0, 1);	
-	//spawnRing_Vectors(VecSelfNpcabs, Range * 2.0, 0.0, 0.0, 25.0, "materials/sprites/laserbeam.vmt", 255, 50, 50, 200, 1, /*duration*/ 0.11, 3.0, 5.0, 1);	
-
-
 	// 2. 시선 처리: 뒷걸음질 중이거나 적이 있을 때 응시 (미니건 조준 유지)
 	if(npc.m_bAllowBackWalking || IsValidEnemy(npc.index, npc.m_iTarget))
 	{
@@ -318,44 +311,7 @@ public void Allyheavy_NPCDeath(int entity)
 
 }
 
-void Allyheavy_ApplyBuffInLocation_Optimized(float BannerPos[3], int Team, int iMe = 0)
-{
-    // 거리 제곱값을 미리 상수로 계산 (루프 밖에서 1번만)
-    float rangeSq = ALLYHEAVY_RANGE * ALLYHEAVY_RANGE; 
-    float targPos[3];
 
-    // 1. 플레이어 루프
-    for(int ally=1; ally<=MaxClients; ally++)
-    {
-        if(IsClientInGame(ally) && IsPlayerAlive(ally) && GetTeam(ally) == Team)
-        {
-            GetClientAbsOrigin(ally, targPos);
-            // 단순 X, Y 거리 필터링 (선택 사항)
-            if (FloatAbs(BannerPos[0] - targPos[0]) > ALLYHEAVY_RANGE) continue; 
-            
-            if (GetVectorDistance(BannerPos, targPos, true) <= rangeSq)
-            {
-                ApplyStatusEffect(ally, ally, "Ally Empowerment", 1.0);
-            }
-        }
-    }
-
-    // 2. NPC 루프 (초기화 및 활성 카운트 적용)
-    for(int i = 0; i < i_MaxcountNpcTotal; i++) // 0으로 명확히 초기화
-    {
-        int ally = EntRefToEntIndexFast(i_ObjectsNpcsTotal[i]);
-        
-        // 유효성 검사를 먼저 수행하여 무거운 연산을 피함
-        if (ally != -1 && IsValidEntity(ally) && !b_NpcHasDied[ally] && GetTeam(ally) == Team && iMe != ally)
-        {
-            GetEntPropVector(ally, Prop_Data, "m_vecAbsOrigin", targPos);
-            if (GetVectorDistance(BannerPos, targPos, true) <= rangeSq)
-            {
-                ApplyStatusEffect(ally, ally, "Ally Empowerment", 1.0);
-            }
-        }
-    }
-}
 
 void AllyheavySelfDefense(Allyheavy npc)
 {
@@ -390,6 +346,11 @@ void AllyheavySelfDefense(Allyheavy npc)
 						damageDealt *= 3.0;
 
 					SDKHooks_TakeDamage(target, npc.index, npc.index, damageDealt, DMG_BULLET, -1, _, vecHit);
+					if (!IsInvuln(target) && !i_IsABuilding[target])
+					{
+						if(!HasSpecificBuff(target, "Fluid Movement"))
+							ApplyStatusEffect(npc.index, target, "Slowdown", 1.0);
+					}
 				}
 			}
 			delete swingTrace;

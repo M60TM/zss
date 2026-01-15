@@ -263,6 +263,29 @@ public void AllySniper_NPCDeath(int entity)
 
 }
 
+void GetPredictedPosition(int target, float shootOrigin[3], float outPos[3])
+{
+    float targetPos[3], targetVel[3];
+    GetEntPropVector(target, Prop_Data, "m_vecAbsOrigin", targetPos);
+    GetEntPropVector(target, Prop_Data, "m_vecAbsVelocity", targetVel);
+
+    // 타겟의 중심부(흉부)를 조준하도록 보정
+    targetPos[2] += 50.0; 
+
+    // 거리 계산
+    float distance = GetVectorDistance(shootOrigin, targetPos);
+    
+    // 탄환 속도 정의 (값이 클수록 예측 반경이 좁아짐, 작을수록 많이 앞질러 쏨)
+    // Birdeye의 로직을 참고하여 약 3000.0~5000.0 사이로 설정 가능
+    float bulletSpeed = 4000.0; 
+    float timeToHit = distance / bulletSpeed;
+
+    // 예측 위치 = 현재 위치 + (속도 * 도달 시간)
+    outPos[0] = targetPos[0] + (targetVel[0] * timeToHit);
+    outPos[1] = targetPos[1] + (targetVel[1] * timeToHit);
+    outPos[2] = targetPos[2] + (targetVel[2] * timeToHit);
+}
+
 int AllySniperSelfDefense(AllySniper npc, float gameTime)
 {
 	if(!npc.m_flAttackHappens)
@@ -348,7 +371,14 @@ int AllySniperSelfDefense(AllySniper npc, float gameTime)
 			int Traced_Target = TR_GetEntityIndex(hTrace);
 			if(Traced_Target > 0)
 			{
-				WorldSpaceCenter(Traced_Target, ThrowPos[npc.index]);
+				float npcOrigin[3];
+				GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", npcOrigin);
+				
+				// 타겟의 미래 위치를 계산하여 ThrowPos에 저장
+				GetPredictedPosition(Traced_Target, npcOrigin, ThrowPos[npc.index]);
+
+				// 레이저 시각 효과 및 조준 방향 업데이트
+				npc.FaceTowards(ThrowPos[npc.index], 15000.0);
 			}
 			else if(TR_DidHit(hTrace))
 			{

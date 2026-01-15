@@ -94,7 +94,7 @@ methodmap Ghoul < CClotBody
 	
 	public Ghoul(float vecPos[3], float vecAng[3], int ally)
 	{
-		Ghoul npc = view_as<Ghoul>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "800", ally, false));
+		Ghoul npc = view_as<Ghoul>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1.mdl", "1.15", "800", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -210,8 +210,8 @@ public void Ghoul_ClotThink(int iNPC)
 										flagsStun |= TF_STUNFLAG_SLOWDOWN;
 
 							if(target <= MaxClients)
-								TF2_StunPlayer(target, 1.2, 0.5, flagsStun);
-							ApplyStatusEffect(npc.index, target, "Cellular Breakdown", 15.0);
+								TF2_StunPlayer(target, 2, 0.5, flagsStun);
+							ApplyStatusEffect(npc.index, target, "Cellular Breakdown", 8.0);
 							npc.PlayMeleeHitSound();
 						}
 						else

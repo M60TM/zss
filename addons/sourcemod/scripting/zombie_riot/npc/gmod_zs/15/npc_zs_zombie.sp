@@ -268,7 +268,7 @@ public Action ZSZombie_OnTakeDamage(int victim, int &attacker, int &inflictor, f
 			npc.bXenoInfectedSpecialHurt = true;
 			npc.flXenoInfectedSpecialHurtTime = GetGameTime(npc.index) + 5.0;
 			SetEntityRenderMode(npc.index, RENDER_NORMAL);
-			SetEntityRenderColor(npc.index, 255, 0, 0, 255);
+			SetEntityRenderColor(npc.index, 255, 165, 0, 255);
 			npc.m_flSpeed = 320.0;
 			CreateTimer(5.0, ZSZombie_Revert_Zombie_Resistance, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
 			CreateTimer(10.0, ZSZombie_Revert_Zombie_Resistance_Enable, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);

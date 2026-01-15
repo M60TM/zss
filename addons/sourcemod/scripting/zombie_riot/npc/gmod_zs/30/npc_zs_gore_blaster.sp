@@ -227,7 +227,7 @@ public void GoreBlaster_ClotThink(int iNPC)
 									SDKHooks_TakeDamage(target, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, vecHit);					
 							}
 
-							StartBleedingTimer(target, npc.index, 4.0, 2, -1, DMG_TRUEDAMAGE, 0);
+							StartBleedingTimer(target, npc.index, 10.0, 4, -1, DMG_TRUEDAMAGE, 0);
 							
 							npc.PlayMeleeHitSound();
 						}
@@ -271,5 +271,10 @@ public void GoreBlaster_NPCDeath(int entity)
 	//TE_Particle("asplode_hoodoo", vecMe, NULL_VECTOR, NULL_VECTOR, _, _, _, _, _, _, _, _, _, _, 0.0);
 	// int team = GetTeam(npc.index);
 
-	Explode_Logic_Custom(40.0, npc.index, npc.index, -1, vecMe, 200.0, 1.0, _, true, 15, _, _, _);
+	Explode_Logic_Custom(40.0, npc.index, npc.index, -1, vecMe, 200.0, 1.0, _, true, 15, _, _, GoreBlaster_ExplodePost);
+}
+
+static void GoreBlaster_ExplodePost(int attacker, int victim, float damage, int weapon)
+{
+	StartBleedingTimer(victim, attacker, 10.0, 4, -1, DMG_TRUEDAMAGE, 0);
 }

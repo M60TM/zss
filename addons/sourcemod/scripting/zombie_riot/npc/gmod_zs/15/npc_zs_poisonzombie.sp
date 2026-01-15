@@ -123,12 +123,9 @@ methodmap ZSPoisonZombie < CClotBody
 		
 	}
 	
-	
-	
-	
 	public ZSPoisonZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSPoisonZombie npc = view_as<ZSPoisonZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.15", "1600", ally));
+		ZSPoisonZombie npc = view_as<ZSPoisonZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.15", "2400", ally));
 		
 		i_NpcWeight[npc.index] = 2;
 		

@@ -118,7 +118,7 @@ methodmap Skeleton < CClotBody
 		func_NPCOnTakeDamage[npc.index] = Generic_OnTakeDamage;
 
         npc.m_flMeleeArmor = 1.0;
-		npc.m_flRangedArmor = 0.5;
+		npc.m_flRangedArmor = 0.25;
 
 		npc.StartPathing();
 		
