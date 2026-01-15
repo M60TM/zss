@@ -43,7 +43,7 @@ public void ShadowWalker_OnMapStart_NPC()
 	for (int i = 0; i < (sizeof(g_MeleeMissSounds));   i++) { PrecacheSound(g_MeleeMissSounds[i]);   }
 
 	PrecacheSound("player/flow.wav");
-	PrecacheModel("models/zombie_riot/gmod_zs/corpse1/corpse1.mdl");
+	PrecacheModel("models/zombie_riot/gmod_zs/corpse1.mdl");
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "Shadow Walker");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_shadow_walker");
@@ -97,7 +97,7 @@ methodmap ShadowWalker < CClotBody
 	
 	public ShadowWalker(float vecPos[3], float vecAng[3], int ally)
 	{
-		ShadowWalker npc = view_as<ShadowWalker>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "800", ally, false));
+		ShadowWalker npc = view_as<ShadowWalker>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1.mdl", "1.15", "800", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		

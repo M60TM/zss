@@ -31,6 +31,7 @@ static const char g_MeleeAttackSounds[][] =
 void ZsSpitter_Precache()
 {
 	NPCData data;
+	PrecacheModel("models/zombie_riot/gmod_zs/corpse1.mdl");
 	strcopy(data.Name, sizeof(data.Name), "ZS Spitter");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_spitter");
 	strcopy(data.Icon, sizeof(data.Icon), "");
@@ -89,7 +90,7 @@ methodmap ZsSpitter < CSeaBody
 	
 	public ZsSpitter(float vecPos[3], float vecAng[3], int ally, const char[] data)
 	{
-		ZsSpitter npc = view_as<ZsSpitter>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "800", ally, false));
+		ZsSpitter npc = view_as<ZsSpitter>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1.mdl", "1.15", "800", ally, false));
 		// 4400 x 0.15
 		// 5000 x 0.15
 		

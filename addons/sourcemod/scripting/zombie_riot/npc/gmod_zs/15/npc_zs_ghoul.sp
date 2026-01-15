@@ -40,7 +40,7 @@ public void Ghoul_OnMapStart_NPC()
 	Zombie_Shared_PheromonePrecache();
 
 	PrecacheSound("player/flow.wav");
-	PrecacheModel("models/zombie_riot/gmod_zs/corpse1/corpse1.mdl");
+	PrecacheModel("models/zombie_riot/gmod_zs/corpse1.mdl");
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "Ghoul");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_ghoul");

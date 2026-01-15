@@ -40,7 +40,7 @@ public void ElderGhoul_OnMapStart_NPC()
 	Zombie_Shared_PheromonePrecache();
 
 	PrecacheSound("player/flow.wav");
-	PrecacheModel("models/zombie_riot/gmod_zs/corpse1/corpse1.mdl");
+	PrecacheModel("models/zombie_riot/gmod_zs/corpse1.mdl");
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "Elder Ghoul");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_elder_ghoul");
@@ -94,7 +94,7 @@ methodmap ElderGhoul < CClotBody
 	
 	public ElderGhoul(float vecPos[3], float vecAng[3], int ally)
 	{
-		ElderGhoul npc = view_as<ElderGhoul>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1/corpse1.mdl", "1.15", "3200", ally, false));
+		ElderGhoul npc = view_as<ElderGhoul>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/corpse1.mdl", "1.15", "3200", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
