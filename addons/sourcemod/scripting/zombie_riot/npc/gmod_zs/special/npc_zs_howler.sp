@@ -48,6 +48,10 @@ static const char g_MeleeMissSounds[][] = {
 	"npc/fast_zombie/claw_miss2.wav",
 };
 
+static const char g_PlayHowlerWarCry[][] = {
+	"zombiesurvival/medieval_raid/special_mutation/arkantos_scream_buff.mp3"
+};
+
 public void ZSHowler_OnMapStart_NPC()
 {
 	for (int i = 0; i < (sizeof(g_DeathSounds));	   i++) { PrecacheSound(g_DeathSounds[i]);	   }
@@ -91,10 +95,7 @@ methodmap ZSHowler < CClotBody
 	}
 	public void PlayHowlerWarCry() 
 	{
-		EmitCustomToAll("zombiesurvival/medieval_raid/special_mutation/arkantos_scream_buff.mp3", this.index, SNDCHAN_STATIC, 120, _, BOSS_ZOMBIE_VOLUME, 100);
-		EmitCustomToAll("zombiesurvival/medieval_raid/special_mutation/arkantos_scream_buff.mp3", this.index, SNDCHAN_STATIC, 120, _, BOSS_ZOMBIE_VOLUME, 100);
-		EmitCustomToAll("zombiesurvival/medieval_raid/special_mutation/arkantos_scream_buff.mp3", this.index, SNDCHAN_STATIC, 120, _, BOSS_ZOMBIE_VOLUME, 100);
-		EmitCustomToAll("zombiesurvival/medieval_raid/special_mutation/arkantos_scream_buff.mp3", this.index, SNDCHAN_STATIC, 120, _, BOSS_ZOMBIE_VOLUME, 100);
+		EmitSoundToAll(g_PlayHowlerWarCry[GetRandomInt(0, sizeof(g_MeleeHitSounds) - 1)], this.index, SNDCHAN_STATIC, 120, _, BOSS_ZOMBIE_VOLUME, 100);
 	}
 	public void PlayHurtSound() {
 		if(this.m_flNextHurtSound > GetGameTime(this.index))
@@ -157,128 +158,119 @@ methodmap ZSHowler < CClotBody
 
 public void ZSHowler_ClotThink(int iNPC)
 {
-	ZSHowler npc = view_as<ZSHowler>(iNPC);
-	float gameTime = GetGameTime(npc.index);
-	
-	// 1. 초기 설정 (기존 동일)
-	SetEntProp(npc.index, Prop_Send, "m_nBody", GetEntProp(npc.index, Prop_Send, "m_nBody"));
-	SetVariantInt(32);
-	AcceptEntityInput(iNPC, "SetBodyGroup");
-	if(IsValidEntity(npc.m_iWearable1)) SetEntProp(npc.m_iWearable1, Prop_Send, "m_nBody", 64);
-	
-	if(npc.m_flNextDelayTime > gameTime) return;
-	npc.m_flNextDelayTime = gameTime + DEFAULT_UPDATE_DELAY_FLOAT;
-	npc.Update();
-	
-	if(npc.m_blPlayHurtAnimation)
-	{
-		npc.m_blPlayHurtAnimation = false;
-		if(!npc.m_flAttackHappenswillhappen)
-			npc.AddGesture("ACT_FLINCH", false);
-		npc.PlayHurtSound();
-	}
-	
-	if(npc.m_flNextThinkTime > gameTime) return;
-	npc.m_flNextThinkTime = gameTime + 0.1;
+    ZSHowler npc = view_as<ZSHowler>(iNPC);
+    float gameTime = GetGameTime(npc.index);
+    
+    // 1. 모델 설정 (투명화 방지)
+    SetEntProp(npc.index, Prop_Send, "m_nBody", GetEntProp(npc.index, Prop_Send, "m_nBody"));
+    SetVariantInt(32); 
+    AcceptEntityInput(iNPC, "SetBodyGroup");
 
-	// 2. 타겟 갱신 (적과 아군 둘 다 찾음)
-	if(npc.m_flGetClosestTargetTime < gameTime)
-	{
-		npc.m_iTargetWalkTo = GetClosestAlly(npc.index);
-		npc.m_iTarget = GetClosestTarget(npc.index);
-		npc.m_flGetClosestTargetTime = gameTime + GetRandomRetargetTime();
-		npc.StartPathing();
-	}
-	
-	int enemy = npc.m_iTarget;
-	int ally = npc.m_iTargetWalkTo;
-	
-	// 3. [핵심 이동 로직 수정] 
-	// 버프가 준비되었고 주변에 아군이 있다면 아군에게 가고, 
-	// 버프가 쿨타임 중이거나 아군이 없으면 적을 쫓습니다.
-	bool bCanBuff = (npc.m_flZSHowlerBuffEffect < gameTime);
-	
-	if(IsValidAlly(npc.index, ally) && bCanBuff)
-	{
-		// 버프 줄 수 있을 때는 아군 서포트
-		npc.SetGoalEntity(ally); 
-	}
-	else if(IsValidEnemy(npc.index, enemy))
-	{
-		// 버프 쿨타임 중이거나 아군이 없으면 적 추격
-		float vecEnemy[3]; WorldSpaceCenter(enemy, vecEnemy);
-		float VecSelf[3]; WorldSpaceCenter(npc.index, VecSelf);
-		float distToEnemy = GetVectorDistance(vecEnemy, VecSelf, true);
+    if(IsValidEntity(npc.m_iWearable1))
+    {
+        SetEntProp(npc.m_iWearable1, Prop_Send, "m_nBody", 64);
+    }
+    
+    if(npc.m_flNextDelayTime > gameTime) return;
+    npc.m_flNextDelayTime = gameTime + DEFAULT_UPDATE_DELAY_FLOAT;
+    npc.Update();
+    
+    // 2. 타겟팅 로직
+    if(npc.m_flGetClosestTargetTime < gameTime)
+    {
+        int ally = GetClosestAlly(npc.index);
+        int enemy = GetClosestTarget(npc.index);
+        
+        // 버프가 가능하면 아군에게, 아니면 적에게
+        if(npc.m_flZSHowlerBuffEffect < gameTime && IsValidAlly(npc.index, ally))
+        {
+            npc.m_iTarget = ally;
+        }
+        else
+        {
+            npc.m_iTarget = enemy;
+        }
+        
+        npc.m_flGetClosestTargetTime = gameTime + GetRandomRetargetTime();
+        npc.StartPathing();
+    }
+    
+    int currentTarget = npc.m_iTarget;
+    if(!IsValidEntity(currentTarget) || !IsEntityAlive(currentTarget)) return;
 
-		if(distToEnemy < npc.GetLeadRadius())
-		{
-			float vPredictedPos[3]; PredictSubjectPosition(npc, enemy,_,_, vPredictedPos);
-			npc.SetGoalVector(vPredictedPos);
-		}
-		else
-		{
-			npc.SetGoalEntity(enemy);
-		}
-	}
+    float vecTarget[3]; WorldSpaceCenter(currentTarget, vecTarget);
+    float VecSelfNpc[3]; WorldSpaceCenter(npc.index, VecSelfNpc);
+    float distSq = GetVectorDistance(vecTarget, VecSelfNpc, true);
 
-	// 4. [행동 로직] 공격 및 버프 실행
-	if(IsValidEnemy(npc.index, enemy))
-	{
-		float vecEnemy[3]; WorldSpaceCenter(enemy, vecEnemy);
-		float VecSelf[3]; WorldSpaceCenter(npc.index, VecSelf);
-		float distToEnemy = GetVectorDistance(vecEnemy, VecSelf, true);
+    // 3. [핵심 수정] 이동 명령을 분기 밖으로 뺌
+    // 목표가 아군이든 적이든 일단 그 대상을 향해 이동해야 합니다.
+    if(distSq < npc.GetLeadRadius())
+    {
+        float vPredictedPos[3]; PredictSubjectPosition(npc, currentTarget,_,_, vPredictedPos);
+        npc.SetGoalVector(vPredictedPos);
+    }
+    else
+    {
+        npc.SetGoalEntity(currentTarget);
+    }
 
-		// 버프 실행 (적과의 거리 혹은 아군과의 거리 기준)
-		if(distToEnemy < 90000.0 && bCanBuff) 
-		{
-			ZSHowlerAOEBuff(npc, gameTime);
-		}
-
-		// 근접 공격 로직
-		if(distToEnemy < NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED || npc.m_flAttackHappenswillhappen)
-		{
-			if(npc.m_flNextMeleeAttack < gameTime)
-			{
-				if (!npc.m_flAttackHappenswillhappen)
-				{
-					npc.AddGesture("ACT_GMOD_GESTURE_RANGE_ZOMBIE");
-					npc.PlayMeleeSound();
-					npc.m_flAttackHappens = gameTime + 0.7;
-					npc.m_flAttackHappens_bullshit = gameTime + 0.83;
-					npc.m_flAttackHappenswillhappen = true;
-				}
-
-				if (npc.m_flAttackHappens < gameTime && npc.m_flAttackHappens_bullshit >= gameTime && npc.m_flAttackHappenswillhappen)
-				{
-					Handle swingTrace;
-					npc.FaceTowards(vecEnemy, 20000.0);
-					if(npc.DoSwingTrace(swingTrace, enemy))
-					{
-						int target = TR_GetEntityIndex(swingTrace);
-						if(target > 0)
-						{
-							float vecHit[3]; TR_GetEndPosition(vecHit, swingTrace);
-							SDKHooks_TakeDamage(target, npc.index, npc.index, 150.0, DMG_CLUB, -1, _, vecHit);
-							npc.PlayMeleeHitSound();
-						}
-						else npc.PlayMeleeMissSound();
-					}
-					delete swingTrace;
-					npc.m_flNextMeleeAttack = gameTime + 0.74;
-					npc.m_flAttackHappenswillhappen = false;
-				}
-				else if (npc.m_flAttackHappens_bullshit < gameTime && npc.m_flAttackHappenswillhappen)
-				{
-					npc.m_flAttackHappenswillhappen = false;
-					npc.m_flNextMeleeAttack = gameTime + 0.74;
-				}
-			}
-		}
-	}
+    // 4. 행동 로직 (버프 또는 공격)
+    if(IsValidAlly(npc.index, currentTarget))
+    {
+        // 아군에게 충분히 근접하면 버프 실행
+        if(distSq < (150.0 * 150.0) && npc.m_flZSHowlerBuffEffect < gameTime)
+        {
+            ZSHowlerAOEBuff(npc, gameTime);
+            // 버프 후 즉시 타겟 재탐색 유도 (적으로 전환하기 위함)
+            npc.m_flGetClosestTargetTime = 0.0;
+        }
+    }
+    else if(IsValidEnemy(npc.index, currentTarget))
+    {
+        // 적에게 근접하면 공격 실행
+        if(distSq < NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED || npc.m_flAttackHappenswillhappen)
+        {
+            if(npc.m_flNextMeleeAttack < gameTime)
+            {
+                if (!npc.m_flAttackHappenswillhappen)
+                {
+                    npc.AddGesture("ACT_GMOD_GESTURE_RANGE_ZOMBIE");
+                    npc.PlayMeleeSound();
+                    npc.m_flAttackHappens = gameTime + 0.7;
+                    npc.m_flAttackHappens_bullshit = gameTime + 0.83;
+                    npc.m_flAttackHappenswillhappen = true;
+                }
+                
+                if (npc.m_flAttackHappens < gameTime && npc.m_flAttackHappenswillhappen)
+                {
+                    Handle swingTrace;
+                    npc.FaceTowards(vecTarget, 20000.0);
+                    if(npc.DoSwingTrace(swingTrace, currentTarget))
+                    {
+                        int hit = TR_GetEntityIndex(swingTrace);
+                        if(hit > 0)
+                        {
+                            SDKHooks_TakeDamage(hit, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, _);
+                            npc.PlayMeleeHitSound();
+                        }
+                        else npc.PlayMeleeMissSound();
+                    }
+                    delete swingTrace;
+                    npc.m_flNextMeleeAttack = gameTime + 0.74;
+                    npc.m_flAttackHappenswillhappen = false;
+                }
+            }
+        }
+    }
 	else
 	{
-		npc.PlayIdleSound();
+		npc.StopPathing();
+		
+		npc.m_flGetClosestTargetTime = 0.0;
+		npc.m_iTarget = GetClosestTarget(npc.index);
 	}
+    
+    npc.PlayIdleSound();
 }
 void ZSHowlerAOEBuff(ZSHowler npc, float gameTime, bool mute = false)
 {

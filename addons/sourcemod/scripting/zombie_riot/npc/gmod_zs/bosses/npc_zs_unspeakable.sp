@@ -51,9 +51,9 @@ static const char g_TeleportSound[][] = {
 	"weapons/rescue_ranger_teleport_receive_02.wav",
 };
 
-static const char g_SuicideSound[][] = {
-	"ambient/explosions/citadel_end_explosion1.wav",
-};
+static const char g_SuicideSound[] = "ambient/explosions/citadel_end_explosion1.wav";
+
+static const char g_Jump_sound[] = "misc/halloween/spell_blast_jump.wav";
 
 static int i_LaserEntityIndex[MAXENTITIES]={-1, ...};
 
@@ -83,13 +83,14 @@ void ZsUnspeakable_OnMapStart_NPC()
 
 static void ClotPrecache()
 {
-	for (int i = 0; i < (sizeof(g_DeathSounds));	   i++) { PrecacheSound(g_DeathSounds[i]);	   }
-	for (int i = 0; i < (sizeof(g_HurtSounds));		i++) { PrecacheSound(g_HurtSounds[i]);		}
-	for (int i = 0; i < (sizeof(g_IdleAlertedSounds)); i++) { PrecacheSound(g_IdleAlertedSounds[i]); }
-	for (int i = 0; i < (sizeof(g_MeleeAttackSounds)); i++) { PrecacheSound(g_MeleeAttackSounds[i]); }
-	for (int i = 0; i < (sizeof(g_MeleeHitSounds)); i++) { PrecacheSound(g_MeleeHitSounds[i]); }
-	for (int i = 0; i < (sizeof(g_TeleportSound)); i++) { PrecacheSound(g_TeleportSound[i]); }
-	for (int i = 0; i < (sizeof(g_SuicideSound));   i++) { PrecacheSound(g_SuicideSound[i]);   }
+	PrecacheSoundArray(g_DeathSounds);
+	PrecacheSoundArray(g_HurtSounds);
+	PrecacheSoundArray(g_IdleAlertedSounds);
+	PrecacheSoundArray(g_MeleeAttackSounds);
+	PrecacheSoundArray(g_MeleeHitSounds);
+	PrecacheSoundArray(g_TeleportSound);
+	PrecacheSound(g_Jump_sound);
+	PrecacheSound(g_SuicideSound);
 	PrecacheSoundCustom("#zombiesurvival/void_wave/center_of_the_void_1.mp3");
 }
 
@@ -139,8 +140,12 @@ methodmap ZsUnspeakable < CClotBody
 	}
 	public void PlaySuicideSound() 
 	{
-		EmitSoundToAll(g_SuicideSound[GetRandomInt(0, sizeof(g_SuicideSound) - 1)], this.index, SNDCHAN_STATIC, RAIDBOSS_ZOMBIE_SOUNDLEVEL, _, BOSS_ZOMBIE_VOLUME, 90);
-		EmitSoundToAll(g_SuicideSound[GetRandomInt(0, sizeof(g_SuicideSound) - 1)], this.index, SNDCHAN_STATIC, RAIDBOSS_ZOMBIE_SOUNDLEVEL, _, BOSS_ZOMBIE_VOLUME, 90);
+		EmitSoundToAll(g_SuicideSound, this.index, SNDCHAN_STATIC, RAIDBOSS_ZOMBIE_SOUNDLEVEL, _, BOSS_ZOMBIE_VOLUME, 90);
+		EmitSoundToAll(g_SuicideSound, this.index, SNDCHAN_STATIC, RAIDBOSS_ZOMBIE_SOUNDLEVEL, _, BOSS_ZOMBIE_VOLUME, 90);
+	}
+	public void PlayJumpSound() 
+	{
+		EmitSoundToAll(g_Jump_sound, this.index, SNDCHAN_STATIC, RAIDBOSS_ZOMBIE_SOUNDLEVEL, _, BOSS_ZOMBIE_VOLUME, GetRandomInt(80, 85));
 	}
 	property float m_flZsUnspeakableQuake
 	{
@@ -212,6 +217,16 @@ methodmap ZsUnspeakable < CClotBody
 	{
 		public get()							{ return b_InKame[this.index]; }
 		public set(bool TempValueForProperty) 	{ b_InKame[this.index] = TempValueForProperty; }
+	}
+	property float m_fPoYoJumpCD
+	{
+		public get()							{ return fl_AttackHappensMaximum[this.index]; }
+		public set(float TempValueForProperty) 	{ fl_AttackHappensMaximum[this.index] = TempValueForProperty; }
+	}
+	property float m_fPoYoJumpUtill
+	{
+		public get()							{ return fl_NextDelayTime[this.index]; }
+		public set(float TempValueForProperty) 	{ fl_NextDelayTime[this.index] = TempValueForProperty; }
 	}
 	
 	public ZsUnspeakable(float vecPos[3], float vecAng[3], int ally, const char[] data)
@@ -297,6 +312,8 @@ methodmap ZsUnspeakable < CClotBody
 		npc.m_flZsUnspeakableQuake = 0.0;
 		npc.m_flVoidMatterAbosorbCooldown = GetGameTime() + 15.0;
 		npc.m_flVoidMatterAbosorb = 0.0;
+		npc.m_fPoYoJumpCD = 0.0;
+		npc.m_fPoYoJumpUtill = 0.0;
 		npc.m_flVoidPillarAttack =  GetGameTime() + 5.0;
 		AlreadySaidWin = false;
 		AlreadySaidLastmann = false;
@@ -361,7 +378,7 @@ methodmap ZsUnspeakable < CClotBody
 				RaidModeScaling *= 0.5;
 			}
 			float amount_of_people = ZRStocks_PlayerScalingDynamic();
-			npc.m_iPlayerScaledStart = CountPlayersOnRed();
+			//npc.m_iPlayerScaledStart = CountPlayersOnRed();
 			if(amount_of_people > 12.0)
 			{
 				amount_of_people = 12.0;
@@ -408,8 +425,8 @@ methodmap ZsUnspeakable < CClotBody
 				npc.m_iWearable7 = npc.EquipItem("head", "models/workshop/player/items/all_class/hwn2019_binoculus/hwn2019_binoculus_pyro.mdl");
 				npc.m_iWearable8 = npc.EquipItem("head", "models/workshop/player/items/pyro/hwn2019_pyro_lantern/hwn2019_pyro_lantern.mdl");
 				SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", skin);
+				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
+				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
 				SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable5, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable6, Prop_Send, "m_nSkin", skin);
@@ -445,8 +462,8 @@ methodmap ZsUnspeakable < CClotBody
 				npc.m_iWearable7 = npc.EquipItem("head", "models/workshop/player/items/all_class/hwn2019_binoculus/hwn2019_binoculus_pyro.mdl");
 				npc.m_iWearable8 = npc.EquipItem("head", "models/workshop/player/items/pyro/hwn2019_pyro_lantern/hwn2019_pyro_lantern.mdl");
 				SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", skin);
+				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
+				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
 				SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable5, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable6, Prop_Send, "m_nSkin", skin);
@@ -482,8 +499,8 @@ methodmap ZsUnspeakable < CClotBody
 				npc.m_iWearable7 = npc.EquipItem("head", "models/workshop/player/items/all_class/hwn2019_binoculus/hwn2019_binoculus_pyro.mdl");
 				npc.m_iWearable8 = npc.EquipItem("head", "models/workshop/player/items/pyro/hwn2019_pyro_lantern/hwn2019_pyro_lantern.mdl");
 				SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", skin);
+				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
+				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
 				SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable5, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable6, Prop_Send, "m_nSkin", skin);
@@ -519,8 +536,8 @@ methodmap ZsUnspeakable < CClotBody
 				npc.m_iWearable7 = npc.EquipItem("head", "models/workshop/player/items/all_class/hwn2019_binoculus/hwn2019_binoculus_pyro.mdl");
 				npc.m_iWearable8 = npc.EquipItem("head", "models/workshop/player/items/pyro/hwn2019_pyro_lantern/hwn2019_pyro_lantern.mdl");
 				SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", skin);
-				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", skin);
+				SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
+				SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
 				SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable5, Prop_Send, "m_nSkin", skin);
 				SetEntProp(npc.m_iWearable6, Prop_Send, "m_nSkin", skin);
@@ -553,15 +570,18 @@ methodmap ZsUnspeakable < CClotBody
 	}
 }
 
+#define ZSUNSPEAKABLE_SAFE_RANGE 700.0
+
 public void ZsUnspeakable_ClotThink(int iNPC)
 {
 	ZsUnspeakable npc = view_as<ZsUnspeakable>(iNPC);
 	float TotalArmor = 1.0;
+	float gameTime = GetGameTime(iNPC);
 	if(npc.m_flResistanceBuffs > GetGameTime())
 	{
 		TotalArmor *= 0.25;
 	}
-
+	
 	if(npc.Anger)
 		TotalArmor *= 0.95;
 
@@ -600,9 +620,9 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 		CPrintToChatAll("{red}저것이 당신의 무능함을 비웃고 있다...");
 		SetEntPropFloat(npc.index, Prop_Send, "m_flModelScale", 1.85);
 		RaidModeScaling *= 5.0;
-		fl_Extra_Speed[npc.index] *= 2.0;
-		fl_Extra_MeleeArmor[npc.index] *= 0.1;
-		fl_Extra_RangedArmor[npc.index] *= 0.1;
+		fl_Extra_Speed[npc.index] *= 1.15;
+		//fl_Extra_MeleeArmor[npc.index] *= 0.1;
+		//fl_Extra_RangedArmor[npc.index] *= 0.1;
 		
 		int color[4] = { 150, 255, 150, 255 };
 		SetCustomFog(FogType_NPC, color, color, 200.0, 500.0, 0.99);
@@ -616,6 +636,14 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 	}
 	npc.m_flNextDelayTime = GetGameTime(npc.index) + DEFAULT_UPDATE_DELAY_FLOAT;
 	npc.Update();
+	
+	if(npc.m_flNextThinkTime > gameTime)
+		return;
+		
+	npc.m_flNextThinkTime = gameTime + 0.1;
+
+	float VecSelfNpcabs[3]; GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", VecSelfNpcabs);
+	spawnRing_Vectors(VecSelfNpcabs, ZSUNSPEAKABLE_SAFE_RANGE * 2.0, 0.0, 0.0, 15.0, "materials/sprites/laserbeam.vmt", 125, 125, 255, 200, 1, /*duration*/ 0.11, 20.0, 5.0, 1);	
 
 	if(npc.m_blPlayHurtAnimation)
 	{
@@ -671,6 +699,28 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 		{
 			npc.SetGoalEntity(npc.m_iTarget);
 		}
+		if(npc.m_fPoYoJumpCD < GetGameTime(npc.index))
+		{
+			if(npc.IsOnGround() && flDistanceToTarget > GIANT_ENEMY_MELEE_RANGE_FLOAT_SQUARED && flDistanceToTarget < GIANT_ENEMY_MELEE_RANGE_FLOAT_SQUARED * 10.0)
+			{
+				npc.PlayJumpSound();
+				PluginBot_Jump(npc.index, vecTarget);
+				float flPos[3];
+				int Particle_1;
+				int Particle_2;
+				npc.GetAttachment("foot_L", flPos, NULL_VECTOR);
+				Particle_1 = ParticleEffectAt_Parent(flPos, "rockettrail", npc.index, "foot_L", {0.0,0.0,0.0});
+				npc.GetAttachment("foot_R", flPos, NULL_VECTOR);
+				Particle_2 = ParticleEffectAt_Parent(flPos, "rockettrail", npc.index, "foot_R", {0.0,0.0,0.0});
+				CreateTimer(1.0, Timer_RemoveEntity, EntIndexToEntRef(Particle_1), TIMER_FLAG_NO_MAPCHANGE);
+				CreateTimer(1.0, Timer_RemoveEntity, EntIndexToEntRef(Particle_2), TIMER_FLAG_NO_MAPCHANGE);
+				npc.m_fPoYoJumpCD = GetGameTime(npc.index) + (npc.m_bAlliesSummoned ? 3.0 : 6.0);
+				npc.m_fPoYoJumpUtill = GetGameTime(npc.index) + 0.0;
+			}
+		}
+		
+		if(npc.m_fPoYoJumpUtill && npc.m_fPoYoJumpUtill < GetGameTime(npc.index))
+			npc.m_bAllowBackWalking = false;
 		ZsUnspeakableSelfDefense(npc,GetGameTime(npc.index), npc.m_iTarget, flDistanceToTarget); 
 	}
 	else
@@ -838,7 +888,7 @@ bool ZsUnspeakable_TeleToAnyAffectedOnVoid(ZsUnspeakable npc)
 
                 // 2. 거리 계산 (보스와 대상 사이의 거리)
                 float flDistance = GetVectorDistance(npcPos, targetPos, true);
-				if(flDistance < (500.0 * 500.0))
+				if(flDistance < (ZSUNSPEAKABLE_SAFE_RANGE * ZSUNSPEAKABLE_SAFE_RANGE))
 				{
 					//아무나 500Hu 내에 존재하면 쿨 1초 초기화하고 For 종료
 					npc.m_flJumpCooldown = GameTime + 1.0;
@@ -879,7 +929,16 @@ bool ZsUnspeakable_TeleToAnyAffectedOnVoid(ZsUnspeakable npc)
 					npc.m_flNextMeleeAttack = GameTime + 0.0;
 					npc.m_flJumpCooldown = GameTime + 3.0; // 쿨다운을 15초로 설정
 					
+					float vPredictedPos[3];
+					PredictSubjectPosition(npc, npc.m_iTarget,_,_, vPredictedPos);
+					vPredictedPos = GetBehindTarget(npc.m_iTarget, 30.0 ,vPredictedPos);
+					float SelfPos[3];
+					GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", SelfPos);
+					float AllyAng[3];
+					GetEntPropVector(npc.index, Prop_Data, "m_angRotation", AllyAng);
 					int color[4] = {150, 255, 150, 255};
+					ParticleEffectAt(SelfPos, "teleported_blue", 0.5);
+					ParticleEffectAt(vPredictedPos, "teleported_blue", 0.5);
 					TE_SetupBeamPoints(PreviousPos, WorldSpaceVec, Shared_BEAM_Laser, 0, 0, 0, 0.35, 2.0, 5.0, 0, 5.0, color, 3);
 					TE_SendToAll(0.0);
 					
@@ -888,6 +947,14 @@ bool ZsUnspeakable_TeleToAnyAffectedOnVoid(ZsUnspeakable npc)
 					npc.m_flGetClosestTargetTime = GameTime + GetRandomRetargetTime();
 
 					// 대상에게 알림
+					if(IsValidClient(EnemyLoop))
+					{
+						float HudY = -1.0;
+						float HudX = -1.0;
+						SetHudTextParams(HudX, HudY, 2.0, 200, 0, 200, 255);
+						SetGlobalTransTarget(EnemyLoop);
+						ShowSyncHudText(EnemyLoop,  SyncHud_Notifaction, "%t", "Unspeakable Teleport Taunt");
+					}
 					return true;
 				}
 				//텔포 실패시, 1초뒤 재시도

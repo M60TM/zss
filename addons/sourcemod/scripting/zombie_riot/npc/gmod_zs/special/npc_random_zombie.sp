@@ -27,6 +27,7 @@ static void ClotPrecache()
 	NPC_GetByPlugin("npc_zmain_headcrabzombie");
 	NPC_GetByPlugin("npc_zmain_poisonzombie");
 	NPC_GetByPlugin("npc_zs_amplification");
+	NPC_GetByPlugin("npc_zs_howler");
 }
 
 bool SameZombieDisallow[6];
@@ -136,6 +137,10 @@ void ZombieSummonRaidboss(int ZombieSummonbase)
 		case 7:
 		{
 			PluginName = "npc_zs_amplification";
+		}
+		case 8:
+		{
+			PluginName = "npc_zs_howler";
 		}
 	}
 	Format(enemy.Data, sizeof(enemy.Data), "%s",CharData);

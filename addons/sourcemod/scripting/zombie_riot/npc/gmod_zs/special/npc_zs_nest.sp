@@ -326,24 +326,24 @@ public void Nest_ClotThink(int iNPC)
 
 				if(GetTeam(iNPC) == TFTeam_Red)
 				{
-					IncreaseSpawnRates *= 1.0; //way slower.
+					IncreaseSpawnRates *= 0.5; //way slower.
 				}
 				
 				if(i_currentwave[iNPC] < 10) {
 					int idx = GetRandomInt(0, sizeof(g_10wave) - 1);
 					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_10wave[idx]);
-					IncreaseSpawnRates *= 0.8;
+					//IncreaseSpawnRates *= 0.8;
 				} 
 				else if(i_currentwave[iNPC] < 20) {
 					int idx = GetRandomInt(0, sizeof(g_20wave) - 1);
 					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_20wave[idx]);
-					IncreaseSpawnRates *= 0.8;
+					//IncreaseSpawnRates *= 0.8;
 				}
 				else if(i_currentwave[iNPC] < 41)
 				{
 					int idx = GetRandomInt(0, sizeof(g_30wave) - 1);
 					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_30wave[idx]);
-					IncreaseSpawnRates *= 0.8;
+					//IncreaseSpawnRates *= 0.8;
 				}
 				
 				if(Rogue_Mode())
