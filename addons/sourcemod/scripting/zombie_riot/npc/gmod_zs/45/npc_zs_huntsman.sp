@@ -226,12 +226,13 @@ public void ZSHuntsman_ClotThink(int iNPC)
 					//Can we attack right now?
 					if(npc.m_flNextMeleeAttack < GetGameTime(npc.index))
 					{
+						float vPredictedPos[3]; PredictSubjectPositionForProjectiles(npc, npc.m_iTarget, 1000.0, _,vPredictedPos);
 						npc.FaceTowards(vecTarget, 20000.0);
 						//Play attack anim
 						npc.AddGesture("ACT_MP_ATTACK_STAND_ITEM2");
 						
 						npc.PlayMeleeSound();
-						int projectile = npc.FireArrow(vecTarget, 200.0, 1200.0);
+						int projectile = npc.FireArrow(vPredictedPos, 80.0, 1200.0);
 						npc.m_flNextMeleeAttack = GetGameTime(npc.index) + 1.5;
 						WandProjectile_ApplyFunctionToEntity(projectile, ZSHuntsman_Particle_StartTouch);
 					}

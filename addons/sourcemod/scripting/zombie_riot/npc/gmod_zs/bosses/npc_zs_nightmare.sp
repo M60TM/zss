@@ -100,7 +100,7 @@ methodmap ZSNightmare < CClotBody
 		
 		FormatEx(c_HeadPlaceAttachmentGibName[npc.index], sizeof(c_HeadPlaceAttachmentGibName[]), "head");
 		
-		int iActivity = npc.LookupActivity("ACT_HL2MP_WALK_ZOMBIE_01");
+		int iActivity = npc.LookupActivity("ACT_HL2MP_RUN_ZOMBIE");
 		if(iActivity > 0) npc.StartActivity(iActivity);
 		
 		npc.m_flNextMeleeAttack = 0.0;
@@ -232,9 +232,9 @@ public void ZSNightmare_ClotThink(int iNPC)
 						{
 							{
 								if(!ShouldNpcDealBonusDamage(target))
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 2500.0, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 1000.0, DMG_CLUB, -1, _, vecHit);
 								else
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 1000.0, DMG_CLUB, -1, _, vecHit);					
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 2500.0, DMG_CLUB, -1, _, vecHit);					
 							}
 							
 							npc.PlayMeleeHitSound();

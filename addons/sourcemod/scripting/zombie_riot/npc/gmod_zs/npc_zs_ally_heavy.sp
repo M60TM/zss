@@ -139,6 +139,11 @@ methodmap Allyheavy < CClotBody
 		npc.m_iWearable2 = npc.EquipItem("head", "models/workshop/player/items/heavy/hw2013_heavy_robin/hw2013_heavy_robin.mdl");
 		AcceptEntityInput(npc.m_iWearable2, "SetModelScale");
 		
+		npc.m_iWearable3 = npc.EquipItem("head", "models/player/items/heavy/xms_heavy_sandvichsafe.mdl");
+		AcceptEntityInput(npc.m_iWearable3, "SetModelScale");
+		
+		
+		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 0);
 		if(npc.m_bScalesWithWaves)
 		{
 			SetEntityRenderMode(npc.index, RENDER_TRANSCOLOR);

@@ -2,11 +2,18 @@
 #pragma newdecls required
 
 static char g_DeathSounds[][] = {
-	"npc/fast_zombie/wake1.wav",
+	"npc/zombie/zombie_die1.wav",
+	"npc/zombie/zombie_die2.wav",
+	"npc/zombie/zombie_die3.wav",
 };
 
 static char g_HurtSounds[][] = {
-	"npc/fast_zombie/wake1.wav",
+	"npc/zombie/zombie_pain1.wav",
+	"npc/zombie/zombie_pain2.wav",
+	"npc/zombie/zombie_pain3.wav",
+	"npc/zombie/zombie_pain4.wav",
+	"npc/zombie/zombie_pain5.wav",
+	"npc/zombie/zombie_pain6.wav",
 };
 
 static char g_leap_prepare[][] = {
@@ -14,18 +21,21 @@ static char g_leap_prepare[][] = {
 };
 
 static char g_leap_scream[][] = {
-	"npc/fast_zombie/fz_scream1.wav",
+	"npc/zombie/zombie_alert1.wav",
+	"npc/zombie/zombie_alert2.wav",
+	"npc/zombie/zombie_alert3.wav",
 };
 
 static char g_IdleSounds[][] = {
-	"npc/fast_zombie/idle1.wav",
-	"npc/fast_zombie/idle2.wav",
-	"npc/fast_zombie/idle3.wav",
+	"npc/zombie/zombie_alert1.wav",
+	"npc/zombie/zombie_alert2.wav",
+	"npc/zombie/zombie_alert3.wav",
 };
 
 static char g_IdleAlertedSounds[][] = {
-	"npc/fast_zombie/fz_alert_close1.wav",
-	"npc/fast_zombie/fz_alert_far1.wav",
+	"npc/zombie/zombie_alert1.wav",
+	"npc/zombie/zombie_alert2.wav",
+	"npc/zombie/zombie_alert3.wav",
 };
 
 static char g_MeleeHitSounds[][] = {
@@ -34,7 +44,8 @@ static char g_MeleeHitSounds[][] = {
 	"npc/fast_zombie/claw_strike3.wav",
 };
 static char g_MeleeAttackSounds[][] = {
-	"zombie_riot/gmod_zs/fast/gurgle.wav",
+	"npc/zombie/zo_attack1.wav",
+	"npc/zombie/zo_attack2.wav",
 };
 
 static char g_MeleeMissSounds[][] = {
@@ -50,7 +61,7 @@ static char g_PlayMeleeJumpSound[][] = {
 	"npc/fast_zombie/claw_miss2.wav",
 };
 
-public void ZSFastheadcrabZombie_OnMapStart_NPC()
+public void Bastardzine_OnMapStart_NPC()
 {
 	for (int i = 0; i < (sizeof(g_DeathSounds));	   i++) { PrecacheSound(g_DeathSounds[i]);	   }
 	for (int i = 0; i < (sizeof(g_HurtSounds));		i++) { PrecacheSound(g_HurtSounds[i]);		}
@@ -66,27 +77,27 @@ public void ZSFastheadcrabZombie_OnMapStart_NPC()
 	for (int i = 0; i < (sizeof(g_leap_prepare));   i++) { PrecacheSound(g_leap_prepare[i]);   }
 	PrecacheModel("models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl");
 	NPCData data;
-	strcopy(data.Name, sizeof(data.Name), "Fast Zombie");
-	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_fastheadcrab_zombie");
-	strcopy(data.Icon, sizeof(data.Icon), "norm_fast_zombie_forti");
+	strcopy(data.Name, sizeof(data.Name), "Bastardzine");
+	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_bastardzine");
+	strcopy(data.Icon, sizeof(data.Icon), "gmod_zs_bastardzine");
 	data.IconCustom = true;
 	data.Flags = 0;
-	data.Category = Type_GmodZS;
+	data.Category = Type_GmodZS|MVM_CLASS_FLAG_MINIBOSS;
 	data.Func = ClotSummon;
 	NPC_Add(data);
 }
 static any ClotSummon(int client, float vecPos[3], float vecAng[3], int team)
 {
-	return ZSFastheadcrabZombie(vecPos, vecAng, team);
+	return Bastardzine(vecPos, vecAng, team);
 }
-methodmap ZSFastheadcrabZombie < CClotBody
+methodmap Bastardzine < CClotBody
 {
 	public void PlayIdleSound() {
 		if(this.m_flNextIdleSound > GetGameTime(this.index))
 			return;
 		
 		EmitSoundToAll(g_IdleSounds[GetRandomInt(0, sizeof(g_IdleSounds) - 1)], this.index, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
-		this.m_flNextIdleSound = GetGameTime(this.index) + GetRandomFloat(3.0, 6.0);
+		this.m_flNextIdleSound = GetGameTime(this.index) + GetRandomFloat(30.0, 60.0);
 		
 	}
 	
@@ -95,7 +106,7 @@ methodmap ZSFastheadcrabZombie < CClotBody
 			return;
 		
 		EmitSoundToAll(g_IdleAlertedSounds[GetRandomInt(0, sizeof(g_IdleAlertedSounds) - 1)], this.index, _, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
-		this.m_flNextIdleSound = GetGameTime(this.index) + GetRandomFloat(3.0, 6.0);
+		this.m_flNextIdleSound = GetGameTime(this.index) + GetRandomFloat(30.0, 60.0);
 		
 	}
 	
@@ -145,8 +156,8 @@ methodmap ZSFastheadcrabZombie < CClotBody
 	
 	public void PlayMeleeSound() {
 		EmitSoundToAll(g_MeleeAttackSounds[GetRandomInt(0, sizeof(g_MeleeAttackSounds) - 1)], this.index, SNDCHAN_VOICE, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
-		
 	}
+
 	public void PlayMeleeHitSound() {
 		EmitSoundToAll(g_MeleeHitSounds[GetRandomInt(0, sizeof(g_MeleeHitSounds) - 1)], this.index, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
 	}
@@ -159,9 +170,9 @@ methodmap ZSFastheadcrabZombie < CClotBody
 	
 	
 	
-	public ZSFastheadcrabZombie(float vecPos[3], float vecAng[3], int ally)
+	public Bastardzine(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSFastheadcrabZombie npc = view_as<ZSFastheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.15", "2800", ally, false));
+		Bastardzine npc = view_as<Bastardzine>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.15", "15000", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -170,24 +181,26 @@ methodmap ZSFastheadcrabZombie < CClotBody
 		int iActivity = npc.LookupActivity("ACT_HL2MP_RUN_ZOMBIE_FAST");
 		if(iActivity > 0) npc.StartActivity(iActivity);
 		
+		npc.m_iWearable1 = npc.EquipItem("weapon_bone", "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl");
+		SetVariantString("1.0");
+		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
+		SetEntityRenderMode(npc.m_iWearable1, RENDER_TRANSCOLOR);
+		SetEntityRenderColor(npc.m_iWearable1, 150, 255, 150, 255);
+		
 		npc.m_iBleedType = BLEEDTYPE_NORMAL;
 		npc.m_iStepNoiseType = STEPSOUND_NORMAL;	
 		npc.m_iNpcStepVariation = STEPTYPE_NORMAL;
 		
-		func_NPCDeath[npc.index] = ZSFastheadcrabZombie_NPCDeath;
-		func_NPCThink[npc.index] = ZSFastheadcrabZombie_ClotThink;	
-		func_NPCOnTakeDamage[npc.index] = ZSFastheadcrabZombie_OnTakeDamage;	
+		func_NPCDeath[npc.index] = Bastardzine_NPCDeath;
+		func_NPCThink[npc.index] = Bastardzine_BastardzineThink;	
+		func_NPCOnTakeDamage[npc.index] = Generic_OnTakeDamage;	
 		
 		
 		//IDLE
-		npc.m_flSpeed = 400.0;
+		npc.m_flSpeed = 350.0;
 		npc.m_flGetClosestTargetTime = 0.0;
 		npc.m_flJumpCooldown = GetGameTime(npc.index) + 3.0;
 		npc.m_flInJump = 0.0;
-
-		npc.m_iWearable1 = npc.EquipItem("weapon_bone", "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl");
-		SetVariantString("1.0");
-		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
 		
 		npc.StartPathing();
 
@@ -200,14 +213,14 @@ methodmap ZSFastheadcrabZombie < CClotBody
 }
 
 
-public void ZSFastheadcrabZombie_ClotThink(int iNPC)
+public void Bastardzine_BastardzineThink(int iNPC)
 {
-	ZSFastheadcrabZombie npc = view_as<ZSFastheadcrabZombie>(iNPC);
+	Bastardzine npc = view_as<Bastardzine>(iNPC);
 	
 	SetEntProp(npc.index, Prop_Send, "m_nBody", GetEntProp(npc.index, Prop_Send, "m_nBody"));
-	SetVariantInt(4);
+	SetVariantInt(1);
 	AcceptEntityInput(iNPC, "SetBodyGroup");
-	SetEntProp(npc.m_iWearable1, Prop_Send, "m_nBody", 8);
+	SetEntProp(npc.m_iWearable1, Prop_Send, "m_nBody", 2);
 	
 	if(npc.m_flNextDelayTime > GetGameTime(npc.index))
 	{
@@ -232,6 +245,7 @@ public void ZSFastheadcrabZombie_ClotThink(int iNPC)
 	}
 	
 	int PrimaryThreatIndex = npc.m_iTarget;
+	int closest = npc.m_iTarget;
 	
 	if(IsValidEnemy(npc.index, PrimaryThreatIndex))
 	{
@@ -289,38 +303,56 @@ public void ZSFastheadcrabZombie_ClotThink(int iNPC)
 		//	npc.FaceTowards(vecTarget, 1000.0);
 			
 			//Can we attack right now?
-			if(npc.m_flNextMeleeAttack < GetGameTime(npc.index))
+			if(flDistanceToTarget < NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED || npc.m_flAttackHappenswillhappen)
 			{
-				//Play attack anim
-				npc.AddGesture("ACT_GMOD_GESTURE_RANGE_FRENZY");
 				
-				Handle swingTrace;
-				npc.FaceTowards(vecTarget, 20000.0);
-				if(npc.DoSwingTrace(swingTrace, PrimaryThreatIndex))
+				if(npc.m_flNextMeleeAttack < GetGameTime(npc.index))
 				{
-						
-					int target = TR_GetEntityIndex(swingTrace);	
-					
-					float vecHit[3];
-					TR_GetEndPosition(vecHit, swingTrace);
-					
-					if(target > 0) 
+					if (!npc.m_flAttackHappenswillhappen)
 					{
-						if(!ShouldNpcDealBonusDamage(target))
-							SDKHooks_TakeDamage(target, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, vecHit);
-						else
-							SDKHooks_TakeDamage(target, npc.index, npc.index, 60.0, DMG_CLUB, -1, _, vecHit);
-						
-						// Hit particle
-						
-						
-						// Hit sound
+						npc.AddGesture("ACT_GMOD_GESTURE_RANGE_ZOMBIE_SPECIAL");
 						npc.PlayMeleeSound();
-						npc.PlayMeleeHitSound();
-					} 
+						npc.m_flAttackHappens = GetGameTime(npc.index)+0.7;
+						npc.m_flAttackHappens_bullshit = GetGameTime(npc.index)+0.83;
+						npc.m_flAttackHappenswillhappen = true;
+					}
+
+					if (npc.m_flAttackHappens < GetGameTime(npc.index) && npc.m_flAttackHappens_bullshit >= GetGameTime(npc.index) && npc.m_flAttackHappenswillhappen)
+					{
+						Handle swingTrace;
+						npc.FaceTowards(vecTarget, 30000.0);
+						if(npc.DoSwingTrace(swingTrace, closest))
+						{
+							int target = TR_GetEntityIndex(swingTrace);	
+							float vecHit[3];
+							TR_GetEndPosition(vecHit, swingTrace);
+							if(target > 0) 
+							{
+								{
+									if(!ShouldNpcDealBonusDamage(target))
+										SDKHooks_TakeDamage(target, npc.index, npc.index, 200.0, DMG_CLUB, -1, _, vecHit);
+									else
+										SDKHooks_TakeDamage(target, npc.index, npc.index, 120.0, DMG_CLUB, -1, _, vecHit);					
+								}
+								
+								npc.PlayMeleeHitSound();
+							}
+							else
+							{
+								npc.PlayMeleeMissSound();
+							}
+						}
+						delete swingTrace;
+						npc.m_flNextMeleeAttack = GetGameTime(npc.index) + 0.74;
+						npc.m_flAttackHappenswillhappen = false;
+					}
+					else if (npc.m_flAttackHappens_bullshit < GetGameTime(npc.index) && npc.m_flAttackHappenswillhappen)
+					{
+						npc.m_flAttackHappenswillhappen = false;
+						npc.m_flNextMeleeAttack = GetGameTime(npc.index) + 0.74;
+					}
 				}
-				delete swingTrace;
-				npc.m_flNextMeleeAttack = GetGameTime(npc.index) + 0.32;
+				
 			}
 		}
 		else
@@ -339,70 +371,16 @@ public void ZSFastheadcrabZombie_ClotThink(int iNPC)
 	npc.PlayIdleAlertSound();
 }
 
-public Action ZSFastheadcrabZombie_OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3], int damagecustom)
+public void Bastardzine_NPCDeath(int entity)
 {
-	//Valid attackers only.
-	if(attacker <= 0)
-		return Plugin_Continue;
-		
-	ZSFastheadcrabZombie npc = view_as<ZSFastheadcrabZombie>(victim);
-	
-	if(!NpcStats_IsEnemySilenced(victim))
-	{
-		if(!npc.bXenoInfectedSpecialHurt)
-		{
-			npc.bXenoInfectedSpecialHurt = true;
-			damage = 0.0;
-			EmitSoundToAll("physics/metal/metal_box_impact_bullet1.wav", attacker, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, 0.5);
-			return Plugin_Changed;
-		}
-	}
-	
-	/*
-	if(attacker > MaxClients && !IsValidEnemy(npc.index, attacker))
-		return Plugin_Continue;
-	*/
-	
-	if (npc.m_flHeadshotCooldown < GetGameTime(npc.index))
-	{
-		npc.m_flHeadshotCooldown = GetGameTime(npc.index) + DEFAULT_HURTDELAY;
-		npc.PlayHurtSound();
-		
-	}
-	
-	return Plugin_Changed;
-}
-
-public void ZSFastheadcrabZombie_NPCDeath(int entity)
-{
-	ZSFastheadcrabZombie npc = view_as<ZSFastheadcrabZombie>(entity);
+	Bastardzine npc = view_as<Bastardzine>(entity);
 	if(!npc.m_bGib)
 	{
 		npc.PlayDeathSound();	
 	}
+	
 	if(IsValidEntity(npc.m_iWearable1))
 		RemoveEntity(npc.m_iWearable1);
-	if(!NpcStats_IsEnemySilenced(entity))
-	{
-		int maxhealth = ReturnEntityMaxHealth(npc.index);
-		float startPosition[3];
-		GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", startPosition);
-		maxhealth /= 2;
-		for(int i; i<1; i++)
-		{
-			float pos[3]; GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", pos);
-			float ang[3]; GetEntPropVector(npc.index, Prop_Data, "m_angRotation", ang);
-			
-			int spawn_index = NPC_CreateByName("npc_zs_fast_headcrab", -1, pos, ang, GetTeam(npc.index));
-			if(spawn_index > MaxClients)
-			{
-				NpcStats_CopyStats(npc.index, spawn_index);
-				NpcAddedToZombiesLeftCurrently(spawn_index, true);
-				SetEntProp(spawn_index, Prop_Data, "m_iHealth", maxhealth);
-				SetEntProp(spawn_index, Prop_Data, "m_iMaxHealth", maxhealth);
-			}
-		}
-	}
 	
 //	AcceptEntityInput(npc.index, "KillHierarchy");
 }

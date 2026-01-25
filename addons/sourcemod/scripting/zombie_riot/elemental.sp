@@ -1320,15 +1320,18 @@ static const char g_Zombie_Summons[][] =
 
 static void Zombie_Spawning(int entity, int count)
 {
-	int summon = GetRandomInt(0, 16);
-	int wave = (Waves_GetRoundScale() + 1);
-	if(wave >= 20)
-	{
-		summon = GetRandomInt(17, 33);
-	}
+	int max_index = sizeof(g_Zombie_Summons) - 1;
+    int wave = (Waves_GetRoundScale() + 1);
+    int summon;
+
+    if(wave < 20) {
+        summon = GetRandomInt(0, (max_index < 15) ? max_index : 15);
+    } else {
+        summon = GetRandomInt((max_index < 16) ? 0 : 16, max_index);
+    }
 
 	char name[255];
-	FormatEx(name, sizeof(name), "%s", g_Zombie_Summons[summon]);
+    FormatEx(name, sizeof(name), "%s", g_Zombie_Summons[summon]);
 	int health = ReturnEntityMaxHealth(entity);
 	if(b_thisNpcIsABoss[entity])
 	{
@@ -1358,10 +1361,10 @@ static void Zombie_Spawning(int entity, int count)
 	enemy.ExtraDamage = 1.0;
 	enemy.ExtraSize = 1.0;		
 	enemy.Team = GetTeam(entity);
-	for(int i; i<count; i++)
-	{
-		Waves_AddNextEnemy(enemy);
-	}
+	for(int i = 0; i < count; i++)
+    {
+        Waves_AddNextEnemy(enemy);
+    }
 	Zombies_Currently_Still_Ongoing += count;
 }
 

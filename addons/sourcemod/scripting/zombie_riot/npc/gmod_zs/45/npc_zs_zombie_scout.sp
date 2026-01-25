@@ -35,7 +35,7 @@ static const char g_IdleAlertedSounds[][] = {
 };
 
 static const char g_MeleeHitSounds[][] = {
-	"weapons/bat_hit.wav",
+	"weapons/bat_baseball_hit_flesh.wav",
 };
 static const char g_MeleeAttackSounds[][] = {
 	"weapons/machete_swing.wav",
@@ -153,7 +153,7 @@ methodmap ZSscout < CClotBody
 		func_NPCOnTakeDamage[npc.index] = ZSscout_OnTakeDamage;
 		func_NPCThink[npc.index] = ZSscout_ClotThink;		
 		
-		npc.m_flSpeed = 340.0;
+		npc.m_flSpeed = 350.0;
 		npc.m_flGetClosestTargetTime = 0.0;
 		npc.StartPathing();
 		
@@ -274,9 +274,9 @@ public void ZSscout_ClotThink(int iNPC)
 							{
 								
 								if(!ShouldNpcDealBonusDamage(target))
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 60.0, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 160.0, DMG_CLUB, -1, _, vecHit);
 								else
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 150.0, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 200.0, DMG_CLUB, -1, _, vecHit);
 								int flagsStun = 0;
 
 								if(Rogue_Paradox_RedMoon())

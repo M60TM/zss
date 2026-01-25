@@ -38,7 +38,7 @@ static char g_MeleeMissSounds[][] = {
 	"npc/fast_zombie/claw_miss2.wav",
 };
 
-public void ZSPoisonheadcrabZombie_OnMapStart_NPC()
+public void ZSVILEPoisonheadcrabZombie_OnMapStart_NPC()
 {
 	for (int i = 0; i < (sizeof(g_DeathSounds));	   i++) { PrecacheSound(g_DeathSounds[i]);	   }
 	for (int i = 0; i < (sizeof(g_HurtSounds));		i++) { PrecacheSound(g_HurtSounds[i]);		}
@@ -52,8 +52,8 @@ public void ZSPoisonheadcrabZombie_OnMapStart_NPC()
 
 	PrecacheModel("models/zombie/poison.mdl");
 	NPCData data;
-	strcopy(data.Name, sizeof(data.Name), "Poison Zombie");
-	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_poisonheadcrab_zombie");
+	strcopy(data.Name, sizeof(data.Name), "Vile Poison Zombie");
+	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_vile_poisonheadcrab_zombie");
 	strcopy(data.Icon, sizeof(data.Icon), "norm_poison_zombie_forti");
 	data.IconCustom = true;
 	data.Flags = 0;
@@ -64,10 +64,10 @@ public void ZSPoisonheadcrabZombie_OnMapStart_NPC()
 
 static any ClotSummon(int client, float vecPos[3], float vecAng[3], int team)
 {
-	return ZSPoisonheadcrabZombie(vecPos, vecAng, team);
+	return ZSVILEPoisonheadcrabZombie(vecPos, vecAng, team);
 }
 
-methodmap ZSPoisonheadcrabZombie < CClotBody
+methodmap ZSVILEPoisonheadcrabZombie < CClotBody
 {
 	public void PlayIdleSound() {
 		if(this.m_flNextIdleSound > GetGameTime(this.index))
@@ -123,9 +123,9 @@ methodmap ZSPoisonheadcrabZombie < CClotBody
 		
 	}
 	
-	public ZSPoisonheadcrabZombie(float vecPos[3], float vecAng[3], int ally)
+	public ZSVILEPoisonheadcrabZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.15", "10800", ally));
+		ZSVILEPoisonheadcrabZombie npc = view_as<ZSVILEPoisonheadcrabZombie>(CClotBody(vecPos, vecAng, "models/zombie/poison.mdl", "1.15", "10800", ally));
 		
 		i_NpcWeight[npc.index] = 2;
 		
@@ -136,9 +136,9 @@ methodmap ZSPoisonheadcrabZombie < CClotBody
 		
 		
 		
-		func_NPCDeath[npc.index] = ZSPoisonheadcrabZombie_NPCDeath;
-		func_NPCOnTakeDamage[npc.index] = ZSPoisonheadcrabZombie_OnTakeDamage;
-		func_NPCThink[npc.index] = ZSPoisonheadcrabZombie_ClotThink;		
+		func_NPCDeath[npc.index] = ZSVILEPoisonheadcrabZombie_NPCDeath;
+		func_NPCOnTakeDamage[npc.index] = ZSVILEPoisonheadcrabZombie_OnTakeDamage;
+		func_NPCThink[npc.index] = ZSVILEPoisonheadcrabZombie_ClotThink;		
 	
 		
 		npc.m_iBleedType = BLEEDTYPE_NORMAL;
@@ -150,6 +150,9 @@ methodmap ZSPoisonheadcrabZombie < CClotBody
 		npc.m_flSpeed = 260.0;
 		npc.StartPathing();
 		
+		SetEntityRenderMode(npc.index, RENDER_TRANSCOLOR);
+		SetEntityRenderColor(npc.index, 150, 255, 150, 255);
+		
 		return npc;
 	}
 	
@@ -157,9 +160,9 @@ methodmap ZSPoisonheadcrabZombie < CClotBody
 }
 
 
-public void ZSPoisonheadcrabZombie_ClotThink(int iNPC)
+public void ZSVILEPoisonheadcrabZombie_ClotThink(int iNPC)
 {
-	ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(iNPC);
+	ZSVILEPoisonheadcrabZombie npc = view_as<ZSVILEPoisonheadcrabZombie>(iNPC);
 	SetVariantInt(1);
 	AcceptEntityInput(iNPC, "SetBodyGroup");
 	if(npc.m_flNextDelayTime > GetGameTime(npc.index))
@@ -305,13 +308,13 @@ public void ZSPoisonheadcrabZombie_ClotThink(int iNPC)
 	npc.PlayIdleAlertSound();
 }
 
-public Action ZSPoisonheadcrabZombie_OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3], int damagecustom)
+public Action ZSVILEPoisonheadcrabZombie_OnTakeDamage(int victim, int &attacker, int &inflictor, float &damage, int &damagetype, int &weapon, float damageForce[3], float damagePosition[3], int damagecustom)
 {
 	//Valid attackers only.
 	if(attacker <= 0)
 		return Plugin_Continue;
 		
-	ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(victim);
+	ZSVILEPoisonheadcrabZombie npc = view_as<ZSVILEPoisonheadcrabZombie>(victim);
 	if(!NpcStats_IsEnemySilenced(victim))
 	{
 		if(!npc.bXenoInfectedSpecialHurt)
@@ -320,8 +323,8 @@ public Action ZSPoisonheadcrabZombie_OnTakeDamage(int victim, int &attacker, int
 			npc.flXenoInfectedSpecialHurtTime = GetGameTime(npc.index) + 2.0;
 			SetEntityRenderMode(npc.index, RENDER_TRANSCOLOR);
 			SetEntityRenderColor(npc.index, 150, 255, 150, 65);
-			CreateTimer(2.0, ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
-			CreateTimer(10.0, ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance_Enable, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(2.0, ZSVILEPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
+			CreateTimer(10.0, ZSVILEPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance_Enable, EntIndexToEntRef(victim), TIMER_FLAG_NO_MAPCHANGE);
 		}
 		float TrueArmor = 1.0;
 		if(!NpcStats_IsEnemySilenced(victim))
@@ -352,7 +355,7 @@ public Action ZSPoisonheadcrabZombie_OnTakeDamage(int victim, int &attacker, int
 	return Plugin_Changed;
 }
 
-public Action ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance(Handle timer, int ref)
+public Action ZSVILEPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance(Handle timer, int ref)
 {
 	int zombie = EntRefToEntIndex(ref);
 	if(IsValidEntity(zombie))
@@ -363,7 +366,7 @@ public Action ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance(Handle time
 	return Plugin_Handled;
 }
 
-public Action ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance_Enable(Handle timer, int ref)
+public Action ZSVILEPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance_Enable(Handle timer, int ref)
 {
 	int zombie = EntRefToEntIndex(ref);
 	if(IsValidEntity(zombie))
@@ -374,9 +377,9 @@ public Action ZSPoisonheadcrabZombie_Revert_Poison_Zombie_Resistance_Enable(Hand
 	return Plugin_Handled;
 }
 
-public void ZSPoisonheadcrabZombie_NPCDeath(int entity)
+public void ZSVILEPoisonheadcrabZombie_NPCDeath(int entity)
 {
-	ZSPoisonheadcrabZombie npc = view_as<ZSPoisonheadcrabZombie>(entity);
+	ZSVILEPoisonheadcrabZombie npc = view_as<ZSVILEPoisonheadcrabZombie>(entity);
 	if(!npc.m_bGib)
 	{
 		npc.PlayDeathSound();	

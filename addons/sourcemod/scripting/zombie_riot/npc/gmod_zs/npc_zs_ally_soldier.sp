@@ -139,10 +139,10 @@ methodmap Allysoldier < CClotBody
 		npc.m_iWearable2 = npc.EquipItem("head", "models/workshop/player/items/soldier/hw2013_feathered_freedom/hw2013_feathered_freedom.mdl");
 		npc.m_iWearable3 = npc.EquipItem("head", "models/weapons/c_models/c_buffpack/c_buffpack.mdl");
 		npc.m_iWearable4 = npc.EquipItem("head", "models/weapons/c_models/c_buffbanner/c_buffbanner.mdl");
-		SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", 1);
-		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
-		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
-		SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", 1);
+		SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", 0);
+		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 0);
+		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 0);
+		SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", 0);
 		
 		if(npc.m_bScalesWithWaves)
 		{
@@ -166,8 +166,6 @@ static void Allysoldier_ClotThink(int iNPC)
 		return;
 	npc.m_flNextDelayTime = gametime + DEFAULT_UPDATE_DELAY_FLOAT;
 	
-	float VecSelfNpcabs[3]; GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", VecSelfNpcabs);
-	Allysoldier_ApplyBuffInLocation_Optimized(VecSelfNpcabs, GetTeam(npc.index), npc.index);
 	//float Range = ALLYSOLDIER_RANGE;
 	//spawnRing_Vectors(VecSelfNpcabs, Range * 2.0, 0.0, 0.0, 0.0, "materials/sprites/laserbeam.vmt", 255, 200, 80, 150, 1, 0.1, 3.0, 0.1, 3);	
 	//spawnRing_Vectors(VecSelfNpcabs, Range * 2.0, 0.0, 0.0, 25.0, "materials/sprites/laserbeam.vmt", 255, 50, 50, 200, 1, /*duration*/ 0.11, 3.0, 5.0, 1);
@@ -183,6 +181,9 @@ static void Allysoldier_ClotThink(int iNPC)
 	if(npc.m_flNextThinkTime > gametime)
 		return;
 	npc.m_flNextThinkTime = gametime + 0.1;
+	
+	float VecSelfNpcabs[3]; GetEntPropVector(npc.index, Prop_Data, "m_vecAbsOrigin", VecSelfNpcabs);
+	Allysoldier_ApplyBuffInLocation_Optimized(VecSelfNpcabs, GetTeam(npc.index), npc.index);
 	
 	int ally = npc.m_iTargetWalkTo;
 	

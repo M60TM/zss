@@ -49,7 +49,7 @@ static const char g_MeleeMissSounds[][] = {
 };
 
 static const char g_PlayHowlerWarCry[][] = {
-	"zombiesurvival/medieval_raid/special_mutation/arkantos_scream_buff.mp3"
+	"zombiesurvival/medieval_raid/special_mutation/arkantos_scream_buff.mp3",
 };
 
 public void ZSHowler_OnMapStart_NPC()
@@ -57,6 +57,7 @@ public void ZSHowler_OnMapStart_NPC()
 	for (int i = 0; i < (sizeof(g_DeathSounds));	   i++) { PrecacheSound(g_DeathSounds[i]);	   }
 	for (int i = 0; i < (sizeof(g_HurtSounds));		i++) { PrecacheSound(g_HurtSounds[i]);		}
 	for (int i = 0; i < (sizeof(g_IdleSounds));		i++) { PrecacheSound(g_IdleSounds[i]);		}
+	for (int i = 0; i < (sizeof(g_PlayHowlerWarCry));		i++) { PrecacheSound(g_PlayHowlerWarCry[i]);		}
 	for (int i = 0; i < (sizeof(g_MeleeHitSounds));	i++) { PrecacheSound(g_MeleeHitSounds[i]);	}
 	for (int i = 0; i < (sizeof(g_MeleeAttackSounds));	i++) { PrecacheSound(g_MeleeAttackSounds[i]);	}
 	for (int i = 0; i < (sizeof(g_MeleeMissSounds));   i++) { PrecacheSound(g_MeleeMissSounds[i]);   }
@@ -66,7 +67,7 @@ public void ZSHowler_OnMapStart_NPC()
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "ZS Howler");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_howler");
-	strcopy(data.Icon, sizeof(data.Icon), "norm_headcrab_zombie");
+	strcopy(data.Icon, sizeof(data.Icon), "gmod_zs_howler");
 	data.IconCustom = true;
 	data.Flags = 0;
 	data.Category = Type_GmodZS;
@@ -95,7 +96,7 @@ methodmap ZSHowler < CClotBody
 	}
 	public void PlayHowlerWarCry() 
 	{
-		EmitSoundToAll(g_PlayHowlerWarCry[GetRandomInt(0, sizeof(g_MeleeHitSounds) - 1)], this.index, SNDCHAN_STATIC, 120, _, BOSS_ZOMBIE_VOLUME, 100);
+		EmitSoundToAll(g_PlayHowlerWarCry[GetRandomInt(0, sizeof(g_MeleeHitSounds) - 1)], this.index, SNDCHAN_STATIC, NORMAL_ZOMBIE_SOUNDLEVEL, _, NORMAL_ZOMBIE_VOLUME);
 	}
 	public void PlayHurtSound() {
 		if(this.m_flNextHurtSound > GetGameTime(this.index))
@@ -128,7 +129,7 @@ methodmap ZSHowler < CClotBody
 		
 		FormatEx(c_HeadPlaceAttachmentGibName[npc.index], sizeof(c_HeadPlaceAttachmentGibName[]), "head");
 		
-		int iActivity = npc.LookupActivity("ACT_HL2MP_WALK_ZOMBIE_01");
+		int iActivity = npc.LookupActivity("ACT_HL2MP_RUN_ZOMBIE");
 		if(iActivity > 0) npc.StartActivity(iActivity);
 		
 		npc.m_iWearable1 = npc.EquipItem("weapon_bone", "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl");
@@ -159,9 +160,7 @@ methodmap ZSHowler < CClotBody
 public void ZSHowler_ClotThink(int iNPC)
 {
     ZSHowler npc = view_as<ZSHowler>(iNPC);
-    float gameTime = GetGameTime(npc.index);
     
-    // 1. 모델 설정 (투명화 방지)
     SetEntProp(npc.index, Prop_Send, "m_nBody", GetEntProp(npc.index, Prop_Send, "m_nBody"));
     SetVariantInt(32); 
     AcceptEntityInput(iNPC, "SetBodyGroup");
@@ -171,106 +170,162 @@ public void ZSHowler_ClotThink(int iNPC)
         SetEntProp(npc.m_iWearable1, Prop_Send, "m_nBody", 64);
     }
     
-    if(npc.m_flNextDelayTime > gameTime) return;
-    npc.m_flNextDelayTime = gameTime + DEFAULT_UPDATE_DELAY_FLOAT;
-    npc.Update();
-    
-    // 2. 타겟팅 로직
-    if(npc.m_flGetClosestTargetTime < gameTime)
-    {
-        int ally = GetClosestAlly(npc.index);
-        int enemy = GetClosestTarget(npc.index);
-        
-        // 버프가 가능하면 아군에게, 아니면 적에게
-        if(npc.m_flZSHowlerBuffEffect < gameTime && IsValidAlly(npc.index, ally))
-        {
-            npc.m_iTarget = ally;
-        }
-        else
-        {
-            npc.m_iTarget = enemy;
-        }
-        
-        npc.m_flGetClosestTargetTime = gameTime + GetRandomRetargetTime();
-        npc.StartPathing();
-    }
-    
-    int currentTarget = npc.m_iTarget;
-    if(!IsValidEntity(currentTarget) || !IsEntityAlive(currentTarget)) return;
+    float gameTime = GetGameTime(iNPC);
 
-    float vecTarget[3]; WorldSpaceCenter(currentTarget, vecTarget);
-    float VecSelfNpc[3]; WorldSpaceCenter(npc.index, VecSelfNpc);
-    float distSq = GetVectorDistance(vecTarget, VecSelfNpc, true);
-
-    // 3. [핵심 수정] 이동 명령을 분기 밖으로 뺌
-    // 목표가 아군이든 적이든 일단 그 대상을 향해 이동해야 합니다.
-    if(distSq < npc.GetLeadRadius())
-    {
-        float vPredictedPos[3]; PredictSubjectPosition(npc, currentTarget,_,_, vPredictedPos);
-        npc.SetGoalVector(vPredictedPos);
-    }
-    else
-    {
-        npc.SetGoalEntity(currentTarget);
-    }
-
-    // 4. 행동 로직 (버프 또는 공격)
-    if(IsValidAlly(npc.index, currentTarget))
-    {
-        // 아군에게 충분히 근접하면 버프 실행
-        if(distSq < (150.0 * 150.0) && npc.m_flZSHowlerBuffEffect < gameTime)
-        {
-            ZSHowlerAOEBuff(npc, gameTime);
-            // 버프 후 즉시 타겟 재탐색 유도 (적으로 전환하기 위함)
-            npc.m_flGetClosestTargetTime = 0.0;
-        }
-    }
-    else if(IsValidEnemy(npc.index, currentTarget))
-    {
-        // 적에게 근접하면 공격 실행
-        if(distSq < NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED || npc.m_flAttackHappenswillhappen)
-        {
-            if(npc.m_flNextMeleeAttack < gameTime)
-            {
-                if (!npc.m_flAttackHappenswillhappen)
-                {
-                    npc.AddGesture("ACT_GMOD_GESTURE_RANGE_ZOMBIE");
-                    npc.PlayMeleeSound();
-                    npc.m_flAttackHappens = gameTime + 0.7;
-                    npc.m_flAttackHappens_bullshit = gameTime + 0.83;
-                    npc.m_flAttackHappenswillhappen = true;
-                }
-                
-                if (npc.m_flAttackHappens < gameTime && npc.m_flAttackHappenswillhappen)
-                {
-                    Handle swingTrace;
-                    npc.FaceTowards(vecTarget, 20000.0);
-                    if(npc.DoSwingTrace(swingTrace, currentTarget))
-                    {
-                        int hit = TR_GetEntityIndex(swingTrace);
-                        if(hit > 0)
-                        {
-                            SDKHooks_TakeDamage(hit, npc.index, npc.index, 100.0, DMG_CLUB, -1, _, _);
-                            npc.PlayMeleeHitSound();
-                        }
-                        else npc.PlayMeleeMissSound();
-                    }
-                    delete swingTrace;
-                    npc.m_flNextMeleeAttack = gameTime + 0.74;
-                    npc.m_flAttackHappenswillhappen = false;
-                }
-            }
-        }
-    }
-	else
+	if(npc.m_flNextDelayTime > gameTime)
 	{
-		npc.StopPathing();
-		
-		npc.m_flGetClosestTargetTime = 0.0;
-		npc.m_iTarget = GetClosestTarget(npc.index);
+		return;
 	}
-    
-    npc.PlayIdleSound();
+	
+	npc.m_flNextDelayTime = gameTime + DEFAULT_UPDATE_DELAY_FLOAT;
+	
+	npc.Update();	
+	
+	if(npc.m_blPlayHurtAnimation)
+	{
+		npc.AddGesture("ACT_GESTURE_FLINCH_HEAD", false);
+		npc.m_blPlayHurtAnimation = false;
+		npc.PlayHurtSound();
+	}
+	
+	if(npc.m_flNextThinkTime > gameTime)
+	{
+		return;
+	}
+	
+	npc.m_flNextThinkTime = gameTime + 0.1;
+
+
+	if(i_ClosestAllyCD[npc.index] < GetGameTime())
+	{
+		i_ClosestAllyCD[npc.index] = GetGameTime() + 1.0;
+		i_ClosestAlly[npc.index] = GetClosestAlly(npc.index);			
+	}
+
+
+	int Behavior = -1;
+	if(IsValidAlly(npc.index, i_ClosestAlly[npc.index]))
+	{
+		Behavior = 1; //We go to the closest ally, and support them in battle!
+	}
+	else //Current ally died, find a new one to help.
+	{
+		i_ClosestAlly[npc.index] = GetClosestAlly(npc.index);	
+		
+		if(IsValidAlly(npc.index, i_ClosestAlly[npc.index]))
+		{
+			Behavior = 1; //We go to the closest ally, and support them in battle!
+		}
+		else
+		{
+			Behavior = 0; //No ally left, attack!
+		}
+	}
+
+	switch(Behavior)
+	{
+		case 0:
+		{
+			if(IsValidEnemy(npc.index, npc.m_iTarget))
+			{
+				float vecTarget[3]; WorldSpaceCenter(npc.m_iTarget, vecTarget );
+				
+				float VecSelfNpc[3]; WorldSpaceCenter(npc.index, VecSelfNpc);
+				float flDistanceToTarget = GetVectorDistance(vecTarget, VecSelfNpc, true);
+					
+				//Predict their pos.
+				if(flDistanceToTarget < npc.GetLeadRadius()) 
+				{
+					float vPredictedPos[3]; PredictSubjectPosition(npc, npc.m_iTarget,_,_, vPredictedPos);
+					npc.SetGoalVector(vPredictedPos);
+				}
+				else 
+				{
+					npc.SetGoalEntity(npc.m_iTarget);
+				}
+				if(npc.m_iChanged_WalkCycle != 4) 	
+				{
+					npc.m_flSpeed = 350.0;
+					npc.m_iChanged_WalkCycle = 4;
+					npc.SetActivity("ACT_HL2MP_RUN_ZOMBIE");
+				}
+				npc.StartPathing(); //Charge at them!
+			}
+			else
+			{
+				view_as<CClotBody>(iNPC).StopPathing();
+				npc.m_iTarget = GetClosestTarget(npc.index); //Find new target instantly.
+			}
+		}
+		case 1:
+		{
+			float flDistanceToTarget;
+			if(i_ClosestAllyCDTarget[npc.index] < GetGameTime(npc.index))
+			{
+				i_ClosestAllyTarget[npc.index] = GetClosestTarget(i_ClosestAlly[npc.index], true, 200.0);
+				i_ClosestAllyCDTarget[npc.index] = GetGameTime(npc.index) + 1.0;
+			}
+			if(IsValidEnemy(npc.index, i_ClosestAllyTarget[npc.index]))
+			{
+				float vecTarget[3]; WorldSpaceCenter(i_ClosestAllyTarget[npc.index], vecTarget );
+				
+				float VecSelfNpc[3]; WorldSpaceCenter(npc.index, VecSelfNpc);
+				flDistanceToTarget = GetVectorDistance(vecTarget, VecSelfNpc, true);
+					
+				//Predict their pos.
+				if(flDistanceToTarget < npc.GetLeadRadius()) 
+				{
+					float vPredictedPos[3];  PredictSubjectPosition(npc, i_ClosestAllyTarget[npc.index],_,_,vPredictedPos);
+					npc.SetGoalVector(vPredictedPos);
+				}
+				else 
+				{
+					npc.SetGoalEntity(i_ClosestAllyTarget[npc.index]);
+				}
+				if(npc.m_iChanged_WalkCycle != 4) 	
+				{
+					npc.m_flSpeed = 350.0;
+					npc.m_iChanged_WalkCycle = 4;
+					npc.SetActivity("ACT_HL2MP_RUN_ZOMBIE");
+				}
+				npc.StartPathing(); //Charge at them!
+			}
+			else
+			{
+				float WorldSpaceVec[3]; WorldSpaceCenter(i_ClosestAlly[npc.index], WorldSpaceVec);
+				float WorldSpaceVec2[3]; WorldSpaceCenter(npc.index, WorldSpaceVec2);
+				flDistanceToTarget = GetVectorDistance(WorldSpaceVec, WorldSpaceVec2, true);
+				if(flDistanceToTarget < (125.0* 125.0) && Can_I_See_Ally(npc.index, i_ClosestAlly[npc.index])) //make sure we can also see them for no unfair bs
+				{
+					if(npc.m_iChanged_WalkCycle != 5)
+					{
+						npc.m_flSpeed = 0.0;
+						npc.m_iChanged_WalkCycle = 5;
+						npc.SetActivity("ACT_HL2MP_RUN_ZOMBIE");
+						view_as<CClotBody>(iNPC).StopPathing();
+					}
+				}
+				else
+				{
+					float AproxRandomSpaceToWalkTo[3];
+					GetEntPropVector(i_ClosestAlly[npc.index], Prop_Data, "m_vecAbsOrigin", AproxRandomSpaceToWalkTo);
+					view_as<CClotBody>(iNPC).SetGoalVector(AproxRandomSpaceToWalkTo);
+					view_as<CClotBody>(iNPC).StartPathing();
+					if(npc.m_iChanged_WalkCycle != 4) 	
+					{
+						npc.m_flSpeed = 350.0;
+						npc.m_iChanged_WalkCycle = 4;
+						npc.SetActivity("ACT_HL2MP_RUN_ZOMBIE");
+					}		
+				}
+			}
+		}
+	}
+
+	ZSHowlerSelfDefense(npc,GetGameTime(npc.index));
+	ZSHowlerAOEBuff(npc,GetGameTime(npc.index));
+
+	npc.PlayIdleSound();
 }
 void ZSHowlerAOEBuff(ZSHowler npc, float gameTime, bool mute = false)
 {
@@ -349,6 +404,93 @@ void ZSHowlerAOEBuff(ZSHowler npc, float gameTime, bool mute = false)
 		{
 			npc.m_flZSHowlerBuffEffect = gameTime + 1.0; //Try again in a second.
 		}
+	}
+}
+void ZSHowlerSelfDefense(ZSHowler npc, float gameTime)
+{
+	if(npc.m_flGetClosestTargetTime < GetGameTime(npc.index))
+	{
+		npc.m_iTarget = GetClosestTarget(npc.index);
+		npc.m_flGetClosestTargetTime = GetGameTime(npc.index) + GetRandomRetargetTime();
+	}
+	
+	int PrimaryThreatIndex = npc.m_iTarget;
+
+	//This code is only here so they defend themselves incase any enemy is too close to them. otherwise it is completly disconnected from any other logic.
+
+	if(npc.m_flAttackHappens)
+	{
+		if(npc.m_flAttackHappens < GetGameTime(npc.index))
+		{
+			npc.m_flAttackHappens = 0.0;
+			
+			if(IsValidEnemy(npc.index, npc.m_iTarget))
+			{
+				Handle swingTrace;
+				float VecEnemy[3]; WorldSpaceCenter(npc.m_iTarget, VecEnemy);
+				npc.FaceTowards(VecEnemy, 15000.0);
+				if(npc.DoSwingTrace(swingTrace, npc.m_iTarget, _, _, _, 0)) //Big range, but dont ignore buildings if somehow this doesnt count as a raid to be sure.
+				{
+					int target = TR_GetEntityIndex(swingTrace);	
+					
+					float vecHit[3];
+					TR_GetEndPosition(vecHit, swingTrace);
+					float damage = 120.0;
+
+
+					if(target > MaxClients)
+					{
+						damage *= 5.0;
+					}
+
+					npc.PlayMeleeHitSound();
+
+					if(target > 0) 
+					{
+						SDKHooks_TakeDamage(target, npc.index, npc.index, damage, DMG_CLUB, -1, _, vecHit);
+					}
+				}
+				delete swingTrace;
+			}
+		}
+	}
+
+	if(GetGameTime(npc.index) > npc.m_flNextMeleeAttack)
+	{
+		if(IsValidEnemy(npc.index, PrimaryThreatIndex)) 
+		{
+			float vecTarget[3]; WorldSpaceCenter(PrimaryThreatIndex, vecTarget);
+
+			float VecSelfNpc[3]; WorldSpaceCenter(npc.index, VecSelfNpc);
+			float flDistanceToTarget = GetVectorDistance(vecTarget, VecSelfNpc, true);
+
+			if(flDistanceToTarget < NORMAL_ENEMY_MELEE_RANGE_FLOAT_SQUARED)
+			{
+				int Enemy_I_See;
+									
+				Enemy_I_See = Can_I_See_Enemy(npc.index, npc.m_iTarget);
+						
+				if(IsValidEntity(Enemy_I_See) && IsValidEnemy(npc.index, Enemy_I_See))
+				{
+					npc.m_iTarget = Enemy_I_See;
+
+					npc.PlayMeleeSound();
+
+					npc.AddGesture("ACT_GMOD_GESTURE_RANGE_ZOMBIE");
+							
+					npc.m_flAttackHappens = gameTime + 0.4;
+
+					npc.m_flDoingAnimation = gameTime + 0.6;
+					npc.m_flNextMeleeAttack = gameTime + 1.2;
+				}
+			}
+		}
+		else
+		{
+			
+			npc.m_flGetClosestTargetTime = 0.0;
+			npc.m_iTarget = GetClosestTarget(npc.index);
+		}	
 	}
 }
 public void ZSHowler_NPCDeath(int entity)

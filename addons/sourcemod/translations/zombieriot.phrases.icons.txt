@@ -722,4 +722,9 @@
 		"en"		"An Infected Ninja Spy has appeared."
 		"ko"		"감염된 닌자 스파이가 등장했습니다."
 	}
+	"Infected Messenger Spawned"
+	{
+		"en"		"An Infected Messenger Spawned has appeared."
+		"ko"		"감염된 전령병이 등장했습니다."
+	}
 }

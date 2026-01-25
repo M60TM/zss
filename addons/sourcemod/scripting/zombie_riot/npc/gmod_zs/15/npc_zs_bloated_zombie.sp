@@ -61,6 +61,13 @@ static any ClotSummon(int client, float vecPos[3], float vecAng[3], int team)
 
 methodmap BloatedZombie < CClotBody
 {
+	property bool m_bElite
+	{
+		public get()
+		{
+			return this.m_iMedkitAnnoyance == 1;
+		}
+	}
 	public void PlayIdleSound() {
 		if(this.m_flNextIdleSound > GetGameTime(this.index))
 			return;
@@ -96,13 +103,13 @@ methodmap BloatedZombie < CClotBody
 	
 	public BloatedZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		BloatedZombie npc = view_as<BloatedZombie>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.25", "325", ally, false));
+		BloatedZombie npc = view_as<BloatedZombie>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.25", "1600", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
 		FormatEx(c_HeadPlaceAttachmentGibName[npc.index], sizeof(c_HeadPlaceAttachmentGibName[]), "head");
 		
-		int iActivity = npc.LookupActivity("ACT_HL2MP_WALK_ZOMBIE_01");
+		int iActivity = npc.LookupActivity("ACT_HL2MP_RUN_ZOMBIE");
 		if(iActivity > 0) npc.StartActivity(iActivity);
 		
 
@@ -211,9 +218,9 @@ public void BloatedZombie_ClotThink(int iNPC)
 						{
 							{
 								if(!ShouldNpcDealBonusDamage(target))
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 31.0, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 80.0, DMG_CLUB, -1, _, vecHit);
 								else
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 49.6, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 120.0, DMG_CLUB, -1, _, vecHit);
 									Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 10 : 10);
 							}
 							
@@ -254,4 +261,11 @@ public void BloatedZombie_NPCDeath(int entity)
 	{
 		npc.PlayDeathSound();	
 	}
+	float vecMe[3]; WorldSpaceCenter(npc.index, vecMe);
+	Explode_Logic_Custom(40.0, npc.index, npc.index, -1, vecMe, 200.0, 1.0, _, true, 15, _, _, BloatedZombie_ExplodePost);
+}
+
+static void BloatedZombie_ExplodePost(int attacker, int victim, float damage, int weapon)
+{
+	Elemental_AddPheromoneDamage(victim, attacker, view_as<BloatedZombie>(attacker).m_bElite ? 10 : 10);
 }

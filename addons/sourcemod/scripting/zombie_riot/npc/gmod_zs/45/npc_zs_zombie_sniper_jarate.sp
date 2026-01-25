@@ -41,7 +41,7 @@ void InfectedSniperjarate_Precache()
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "Infected Jarate Sniper");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_zombie_sniper_jarate");
-	strcopy(data.Icon, sizeof(data.Icon), "sea_sniper");
+	strcopy(data.Icon, sizeof(data.Icon), "ds_sniper");
 	data.IconCustom = true;
 	data.Flags = 0;
 	data.Category = Type_GmodZS;
@@ -183,7 +183,7 @@ public void InfectedSniperjarate_ClotThink(int iNPC)
 					if(target > 0)
 					{
 						npc.PlayMeleeHitSound();
-						SDKHooks_TakeDamage(target, npc.index, npc.index, 100.0, DMG_CLUB);
+						SDKHooks_TakeDamage(target, npc.index, npc.index, 160.0, DMG_CLUB);
 						
 						if(!NpcStats_IsEnemySilenced(npc.index))
 						{

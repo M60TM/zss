@@ -133,9 +133,15 @@ methodmap Allymedic < CClotBody
 		SetVariantString("1.0");
 		AcceptEntityInput(npc.m_iWearable3, "SetModelScale");
 		
+		npc.m_iWearable4 = npc.EquipItem("head", "models/workshop/player/items/medic/sum23_medical_emergency/sum23_medical_emergency.mdl");
+		SetVariantString("1.0");
+		AcceptEntityInput(npc.m_iWearable4, "SetModelScale");
+		
+		
 		SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", 0);
 		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 0);
 		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 0);
+		SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", 0);
 		npc.StartPathing();
 		
 		if(npc.m_bScalesWithWaves)

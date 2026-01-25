@@ -313,7 +313,7 @@ public void InfectedKamikaze_NPCDeath(int entity)
 		pack.WriteCell(100);
 		RequestFrame(DelayExplosiveMakeExplosion, pack);
 		*/
-		makeexplosion(entity, startPosition, 100, 100, _, true);
+		makeexplosion(entity, startPosition, 65, 125, _, true);
 	}
 	else
 	{

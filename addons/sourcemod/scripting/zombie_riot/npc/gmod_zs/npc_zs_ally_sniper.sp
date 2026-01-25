@@ -132,9 +132,10 @@ methodmap AllySniper < CClotBody
 
 		npc.m_iWearable1 = npc.EquipItem("head", "models/weapons/c_models/c_sniperrifle/c_sniperrifle.mdl");
 		npc.m_iWearable2 = npc.EquipItem("head", "models/workshop/player/items/sniper/hw2013_sir_shootsalot/hw2013_sir_shootsalot.mdl");
-
+		npc.m_iWearable3 = npc.EquipItem("head", "models/workshop/player/items/sniper/xms_sniper_commandobackpack/xms_sniper_commandobackpack.mdl");
 		SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", skin);
 		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", skin);
+		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 0);
 
 		TeleportDiversioToRandLocation(npc.index,_,1750.0, 1250.0);
 		
@@ -402,7 +403,7 @@ int AllySniperSelfDefense(AllySniper npc, float gameTime)
 
 	if(gameTime > npc.m_flNextMeleeAttack)
 	{
-		npc.m_flAttackHappens = gameTime + 1.25;
+		npc.m_flAttackHappens = gameTime + 0.0;
 		npc.m_flDoingAnimation = gameTime + 0.95;
 		npc.m_flNextMeleeAttack = gameTime + 1.75;
 	}

@@ -4021,7 +4021,7 @@
 	{
 		"en"	"Void Spawn.\nBuffs enemies around itself on death."
 		"it"	"Void Spawn.\nBuffa i nemici intorno a sé alla morte."
-		"ko"	"공허에서 태어난 존재입니다.\n사망 시, 주변 아군에게 버프를 부여합니다.
+		"ko"	"공허에서 태어난 존재입니다.\n사망 시, 주변 아군에게 버프를 부여합니다."
 	}
 	"Growing Exat"
 	{
@@ -7823,8 +7823,8 @@
 	}
 	"ZS Unspeakable"
 	{
-		"en"	"Indescribable Poyo"
-		"ko"	"형용할 수 없는 뽀요"
+		"en"	"Unclean One"
+		"ko"	"불결한 존재"
 	}
 	"Infected Huntsman Sniper"
 	{
@@ -7861,16 +7861,44 @@
 		"en"	"Howler"
 		"ko"	"하울러"
 	}
+	"Infected Fat Spy"
+	{
+		"en"	"Infected Fat Spy"
+		"ko"	"감염된 뚱뚱한 스파이"
+	}
+	"Infected Cleaner"
+	{
+		"en"	"Infected CESCO Level 4 Cleaner"
+		"ko"	"감염된 세스코 4등급 청소부"
+	}
+	"Infected Battle Medic"
+	{
+		"en"	"Infected Battle Medic"
+		"ko"	"감염된 전투 메딕"
+	}
+	"Infected Fat Scout"
+	{
+		"en"	"Infected Fat Scout"
+		"ko"	"감염된 샷비"
+	}
+	"Infected Ninja Spy"
+	{
+		"en"	"Infected Ninja Spy"
+		"ko"	"감염된 닌자 스파이"
+	}
+	"ZS Chaos"
+	{
+		"en"	"Chaos Pyro"
+		"ko"	"카오스 파이로"
+	}
 	"Pheromone Elemental Damage"
 	{
-		"en"	"Corruption Elemental Damage"
-		"es"	"Daño Elemental Corrupto"
-		"it"	"Danno elementare da corruzione"
+		"en"	"Pheromone Elemental Damage"
 		"ko"	"페로몬 원소 피해"
 	}
 	"Pheromone Elemental Damage Desc"
 	{
-		"en"	""Elemental damage gauge full.\nPheromones leaking from your body are attracting nearby infected.""
+		"en"	"Elemental damage gauge full.\nPheromones leaking from your body are attracting nearby infected."
 		"ko"	"원소 피해 게이지가 꽉 차면, 당신의 몸에서 흘러나오는 페로몬으로 인해서\n주변의 감염체들이 몰려옵니다."
 	}
 }

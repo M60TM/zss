@@ -108,12 +108,15 @@ methodmap Pregnant < CClotBody
 			RaidAllowsBuildings = true;
 		}
 		
-		npc.m_flSpeed = 250.0;	// 0.5 x 250
+		npc.m_flSpeed = 320.0;	// 0.5 x 250
 		npc.m_flGetClosestTargetTime = 0.0;
 		npc.m_flNextMeleeAttack = 0.0;
 		npc.m_flAttackHappens = 0.0;
 		npc.m_iAttacksTillReload = 0;
 		npc.m_iAttacksTillMegahit = 0;
+		
+		EmitSoundToAll("npc/zombie_poison/pz_alert1.wav", _, _, _, _, 1.0);	
+		EmitSoundToAll("npc/zombie_poison/pz_alert1.wav", _, _, _, _, 1.0);	
 		for(int client_check=1; client_check<=MaxClients; client_check++)
 		{
 			if(IsClientInGame(client_check) && !IsFakeClient(client_check))

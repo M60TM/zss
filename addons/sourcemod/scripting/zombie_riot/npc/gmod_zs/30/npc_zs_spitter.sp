@@ -34,7 +34,7 @@ void ZsSpitter_Precache()
 	PrecacheModel("models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl");
 	strcopy(data.Name, sizeof(data.Name), "ZS Spitter");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_spitter");
-	strcopy(data.Icon, sizeof(data.Icon), "");
+	strcopy(data.Icon, sizeof(data.Icon), "gmod_zs_spitter");
 	data.IconCustom = true;
 	data.Flags = 0;
 	data.Category = Type_GmodZS;
@@ -90,13 +90,13 @@ methodmap ZsSpitter < CSeaBody
 	
 	public ZsSpitter(float vecPos[3], float vecAng[3], int ally, const char[] data)
 	{
-		ZsSpitter npc = view_as<ZsSpitter>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.15", "800", ally, false));
+		ZsSpitter npc = view_as<ZsSpitter>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.15", "3200", ally, false));
 		// 4400 x 0.15
 		// 5000 x 0.15
 		
 		npc.SetElite(view_as<bool>(data[0]));
 		i_NpcWeight[npc.index] = 1;
-		int iActivity = npc.LookupActivity("ACT_HL2MP_WALK_ZOMBIE_01");
+		int iActivity = npc.LookupActivity("ACT_HL2MP_RUN_ZOMBIE");
 		if(iActivity > 0) npc.StartActivity(iActivity);
 		KillFeed_SetKillIcon(npc.index, "huntsman");
 		
@@ -170,7 +170,7 @@ public void ZsSpitter_ClotThink(int iNPC)
 				npc.FaceTowards(vecTarget, 15000.0);
 				
 				npc.PlayRangedSound();
-				int entity = npc.FireArrow(vecTarget, npc.m_bElite ? 24.0 : 21.0, 800.0, "models/weapons/w_bugbait.mdl");
+				int entity = npc.FireArrow(vecTarget, npc.m_bElite ? 40.0 : 40.0, 800.0, "models/weapons/w_bugbait.mdl");
 				// 280 * 0.15
 				// 320 * 0.15
 				

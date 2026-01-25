@@ -68,9 +68,9 @@ static int i_LaserEntityIndex[MAXENTITIES]={-1, ...};
 void ZsUnspeakable_OnMapStart_NPC()
 {
 	NPCData data;
-	strcopy(data.Name, sizeof(data.Name), "Unspeakable");
+	strcopy(data.Name, sizeof(data.Name), "ZS Unspeakable");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_unspeakable");
-	strcopy(data.Icon, sizeof(data.Icon), "raid_unspeakable");
+	strcopy(data.Icon, sizeof(data.Icon), "gmod_zs_unspeakable");
 	data.IconCustom = true;
 	data.Flags = MVM_CLASS_FLAG_MINIBOSS|MVM_CLASS_FLAG_ALWAYSCRIT;
 	data.Category = Type_Raid;
@@ -405,8 +405,26 @@ methodmap ZsUnspeakable < CClotBody
 		}
 		EmitSoundToAll("npc/zombie_poison/pz_alert1.wav", _, _, _, _, 1.0, 80);	
 		EmitSoundToAll("npc/zombie_poison/pz_alert1.wav", _, _, _, _, 1.0, 80);	
-
-
+		
+		if(i_RaidGrantExtra[npc.index] >= 4)
+		{
+			switch(GetRandomInt(0,2))
+			{
+				case 0:
+				{
+					CPrintToChatAll("{crimson}불결한 존재{default}: 너희도 우리와 하나가 될것이다.");
+				}
+				case 1:
+				{
+					CPrintToChatAll("{crimson}불결한 존재{default}: 영광스러운 합일에 동참하라.");
+				}
+				case 2:
+				{
+					CPrintToChatAll("{crimson}불결한 존재{default}: 우리와 하나가 되자.");
+				}
+			}
+		}
+		
 		b_thisNpcIsARaid[npc.index] = true;
 		npc.m_flMeleeArmor = 1.5;	
 		npc.m_bAlliesSummoned = false;
@@ -570,7 +588,7 @@ methodmap ZsUnspeakable < CClotBody
 	}
 }
 
-#define ZSUNSPEAKABLE_SAFE_RANGE 700.0
+#define ZSUNSPEAKABLE_SAFE_RANGE 1000.0
 
 public void ZsUnspeakable_ClotThink(int iNPC)
 {
@@ -609,7 +627,21 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 	if(LastMann && !AlreadySaidLastmann)
 	{
 		AlreadySaidLastmann = true;
-		CPrintToChatAll("{red}저것이... 활짝 웃기 시작한다.");
+		switch(GetRandomInt(0,2))
+		{
+			case 0:
+			{
+				CPrintToChatAll("{crimson}불결한 존재{default}: 이것이, 너희의 운명이 도달할 최후의 순간이다.");
+			}
+			case 1:
+			{
+				CPrintToChatAll("{crimson} 감염이 당신의 동료를 전부 집어삼키고 말았습니다... 가능하면 도주하세요.");
+			}
+			case 3:
+			{
+				CPrintToChatAll("{crimson}불결한 존재{default}: 발악해보아라. 이것이 너희의 마지막이 될것이니.");
+			}
+		}
 	}
 	if(!npc.m_flMaxDeath && RaidModeTime < GetGameTime())
 	{
@@ -617,10 +649,10 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 	//	ForcePlayerLoss();
 	//	RaidBossActive = INVALID_ENT_REFERENCE;
 	//	func_NPCThink[npc.index] = INVALID_FUNCTION;
-		CPrintToChatAll("{red}저것이 당신의 무능함을 비웃고 있다...");
+		CPrintToChatAll("{crimson}불결한 존재{crimson}: 전부 죽는다.");
 		SetEntPropFloat(npc.index, Prop_Send, "m_flModelScale", 1.85);
 		RaidModeScaling *= 5.0;
-		fl_Extra_Speed[npc.index] *= 1.15;
+		fl_Extra_Speed[npc.index] *= 1.2;
 		//fl_Extra_MeleeArmor[npc.index] *= 0.1;
 		//fl_Extra_RangedArmor[npc.index] *= 0.1;
 		
@@ -665,7 +697,25 @@ public void ZsUnspeakable_ClotThink(int iNPC)
 	}
 	if(ZsUnspeakable_TeleToAnyAffectedOnVoid(npc))
 	{
-		return;
+		switch(GetRandomInt(0,3))
+		{
+			case 0:
+			{
+				CPrintToChatAll("{crimson}불결한 존재{default}: 도망치지마라!");
+			}
+			case 1:
+			{
+				CPrintToChatAll("{crimson}불결한 존재{default}: 왜 영광스러운 합일을 거부하려 드는가.");
+			}
+			case 2:
+			{
+				CPrintToChatAll("{crimson}불결한 존재{default}: 정해진 운명에 순응하라.");
+			}
+			case 3:
+			{
+				CPrintToChatAll("{crimson}불결한 존재{default}: 그래봤자 무한한 고통을 느끼게 될 뿐이다.");
+			}
+		}
 	}
 
 	if(npc.m_flDoingAnimation < GetGameTime(npc.index))
@@ -756,7 +806,7 @@ public Action ZsUnspeakable_OnTakeDamage(int victim, int &attacker, int &inflict
 			npc.m_bAlliesSummoned = true;
 			Spawn_Zombie(npc);
 		}
-		CPrintToChatAll("{red}저것이 분노했다.");
+		CPrintToChatAll("{crimson}불결한 존재{default}: 이 불경한 놈들이 감히!");
 		RaidModeScaling *= 1.1;
 	}
 	if(npc.g_TimesSummoned < 3)
@@ -782,11 +832,11 @@ public Action ZsUnspeakable_OnTakeDamage(int victim, int &attacker, int &inflict
 			{
 				case 1:
 				{
-					CPrintToChatAll("{red}저것이 고통에 움츠러들었다.");
+					CPrintToChatAll("{crimson}불결한 존재{default}: 나는 너희들과 이 지랄하면서 놀 시간이 없다.");
 				}
 				case 2:
 				{
-					CPrintToChatAll("{red}저것이 고통스럽게 비명을 지르고 있다.");
+					CPrintToChatAll("{crimson}저것이 매우 크게 분노하고 있다.");
 				}
 			}
 		}
@@ -820,7 +870,7 @@ static void Spawn_Zombie(ZsUnspeakable npc)
 	maxhealth= (heck/10);
 	if(i_RaidGrantExtra[npc.index] >= 4)	//Only spawns if the wave is 60 or beyond.
 	{
-		CPrintToChatAll("{red} 저것이 끔찍한 감염체들을 소환했다.", NpcStats_ReturnNpcName(npc.index, true));
+		CPrintToChatAll("{crimson} 저것이 끔찍한 감염체들을 소환했다.", NpcStats_ReturnNpcName(npc.index, true));
 		maxhealth= (heck/5);	//mid squishy
 
 		spawn_index = NPC_CreateByName("npc_major_vulture", npc.index, pos, ang, GetTeam(npc.index));
@@ -843,7 +893,7 @@ static void Spawn_Zombie(ZsUnspeakable npc)
 			SetEntProp(spawn_index, Prop_Data, "m_iMaxHealth", maxhealth);
 		}
 		maxhealth= (heck/10);	//the tankiest
-		spawn_index = NPC_CreateByName("npc_zs_flesh_creeper", npc.index, pos, ang, GetTeam(npc.index));
+		spawn_index = NPC_CreateByName("npc_random_zombie", npc.index, pos, ang, GetTeam(npc.index));
 		NpcAddedToZombiesLeftCurrently(spawn_index, true);
 		if(spawn_index > MaxClients)
 		{
@@ -1159,11 +1209,6 @@ public void ZsUnspeakable_NPCDeath(int entity)
 			RemoveEntity(i_LaserEntityIndex[EnemyLoop]);
 		}				
 	}
-	if(i_RaidGrantExtra[npc.index] == 6)
-	{
-		CPrintToChatAll("{red}돌려보내야한다...");
-		CPrintToChatAll("{darkgray}그림자 응달{default}: 윽... 내 머릿속의 음성이 떠나가질 않아.");	
-	}
 	if(IsValidEntity(npc.m_iWearable8))
 		RemoveEntity(npc.m_iWearable8);
 	if(IsValidEntity(npc.m_iWearable7))
@@ -1208,7 +1253,7 @@ void ZsUnspeakableSelfDefense(ZsUnspeakable npc, float gameTime, int target, flo
 						float vecHit[3];
 						WorldSpaceCenter(target, vecHit);
 									
-						float damageDealt = 30.0 * RaidModeScaling;
+						float damageDealt = 8.0 * RaidModeScaling;
 
 						SDKHooks_TakeDamage(target, npc.index, npc.index, damageDealt, DMG_CLUB, -1, _, vecHit);	
 						Elemental_AddPheromoneDamage(target, npc.index, RoundToNearest(damageDealt * 0.15), true, true);							
@@ -1373,8 +1418,29 @@ public void ZsUnspeakableWin(int entity)
 
 	AlreadySaidWin = true;
 	//b_NpcHasDied[client]
-	CPrintToChatAll("{red}이곳의 모든 것을 파괴한 그것은, 다른 지역을 공격할 준비를 하고 있다.");
-	CPrintToChatAll("{crimson}다음 파괴 대상은 아를린의 나머지 지역들이었다.");
+	switch(GetRandomInt(0,4))
+	{
+		case 0:
+		{
+			CPrintToChatAll("{crimson}당신은 이 싸움에서 희망의 빛줄기를 보지 못 했습니다.");
+		}
+		case 1:
+		{
+			CPrintToChatAll("{crimson}당신은 감염에 저항조차 못 했습니다... 당신은 이제 한낱 감염체로 전락하고 말았습니다.");
+		}
+		case 2:
+		{
+			CPrintToChatAll("{crimson}예상했던대로, 당신은 실패했습니다. 이제 이곳에 희망이란 없습니다...");
+		}
+		case 3:
+		{
+			CPrintToChatAll("{crimson}불결한 존재{default}: 우리의 결속은 자라나고 우리는 영생을 누리리라.");
+		}
+		case 4:
+		{
+			CPrintToChatAll("{crimson}불결한 존재{default}: 계획대로 착착 진행되면 참 기분 좋지");
+		}
+	}
 }
 
 
@@ -1420,25 +1486,7 @@ void ZsUnspeakable_DeathAnimationKahml(ZsUnspeakable npc, float gameTime)
 
 		if(!b_ThisEntityIgnoredByOtherNpcsAggro[npc.index])
 		{
-			switch(i_RaidGrantExtra[npc.index])
-			{
-				case 11:
-				{
-					CPrintToChatAll("{red}어리석은 필멸자들아, 우리를 막을 수 있을 것 같으냐?");
-				}
-				case 12:
-				{
-					CPrintToChatAll("{red}네가 할 수 있는건 아무것도 없다...");
-				}
-				case 13:
-				{
-					CPrintToChatAll("{red}지금 여기에서 모든 시대의 종말을 목격해라...");
-				}
-				case 14:
-				{
-					CPrintToChatAll("{red}공허와 하나가 되어라...");
-				}
-			}
+			return;
 		}
 	}
 }

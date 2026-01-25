@@ -62,10 +62,10 @@ void ZsSoldier_Barrager_OnMapStart_NPC()
 	NPCData data;
 	strcopy(data.Name, sizeof(data.Name), "Colonel Barrage");
 	strcopy(data.Plugin, sizeof(data.Plugin), "npc_zs_soldier_barrager");
+	strcopy(data.Icon, sizeof(data.Icon), "gmod_zs_colonel");
 	data.Category = MVM_CLASS_FLAG_MINIBOSS|MVM_CLASS_FLAG_ALWAYSCRIT;
 	data.Func = ClotSummon;
-	strcopy(data.Icon, sizeof(data.Icon), "soldier_burstfire"); 		//leaderboard_class_(insert the name)
-	data.IconCustom = false;													//download needed?
+	data.IconCustom = true;													//download needed?
 	data.Flags = 0;																//example: MVM_CLASS_FLAG_MINIBOSS|MVM_CLASS_FLAG_ALWAYSCRIT;, forces these flags.	
 	NPC_Add(data);
 
@@ -170,13 +170,14 @@ methodmap ZsSoldier_Barrager < CClotBody
 		SetVariantString("1.0");
 		AcceptEntityInput(npc.m_iWearable2, "SetModelScale");
 		
-		npc.m_iWearable3 = npc.EquipItem("head", "models/player/items/soldier/soldier_officer.mdl");
+		npc.m_iWearable3 = npc.EquipItem("head", "models/workshop/player/items/soldier/hwn2023_shortness_breath/hwn2023_shortness_breath.mdl");
 		SetVariantString("1.0");
-		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
+		AcceptEntityInput(npc.m_iWearable3, "SetModelScale");
+		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
 		
-		npc.m_iWearable4 = npc.EquipItem("head", "models/workshop/player/items/soldier/dec15_diplomat/dec15_diplomat.mdl");
+		npc.m_iWearable4 = npc.EquipItem("head", "models/workshop/player/items/soldier/sum23_stealth_bomber_style1/sum23_stealth_bomber_style1.mdl");
 		SetVariantString("1.0");
-		AcceptEntityInput(npc.m_iWearable1, "SetModelScale");
+		AcceptEntityInput(npc.m_iWearable4, "SetModelScale");
 		
 		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
 		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
@@ -301,27 +302,33 @@ static void Internal_ClotThink(int iNPC)
             npc.SetGoalVector(vBackoffPos, true);
         }
     }
-    else if(flDistanceToTarget < 120000 && npc.m_iAmmo > 0)
-    {
+    else if(flDistanceToTarget < 120000 && npc.m_iAmmo > 0) // 거리 체크(flDistanceToTarget < 120000) 제거
+	{
 		npc.m_flSpeed = 270.0;
-		int Enemy_I_See;
-		
 		fl_ruina_in_combat_timer[npc.index] = 2.5 + GameTime;
 		
-		Enemy_I_See = Can_I_See_Enemy(npc.index, PrimaryThreatIndex);
-		//Target close enough to hit
+		int Enemy_I_See = Can_I_See_Enemy(npc.index, PrimaryThreatIndex);
+		
 		if(IsValidEnemy(npc.index, Enemy_I_See))
 		{	
-			//Can we attack right now?
-			if(npc.m_flNextMeleeAttack < GameTime && npc.m_iAmmo >0)
+			// --- 공격 중 후퇴 로직 추가 ---
+			float vBackoffPos[3];
+			// 적을 바라보면서 뒤로 물러나는 좌표 계산
+			BackoffFromOwnPositionAndAwayFromEnemy(npc, PrimaryThreatIndex, _, vBackoffPos);
+			npc.SetGoalVector(vBackoffPos, true);
+			npc.StartPathing();
+			// --------------------------
+
+			if(npc.m_flNextMeleeAttack < GameTime)
 			{
-				//Play attack anim
 				npc.AddGesture("ACT_MP_ATTACK_STAND_PRIMARY");
-				PredictSubjectPositionForProjectiles(npc, PrimaryThreatIndex, 750.0, _,vecTarget);
+				PredictSubjectPositionForProjectiles(npc, PrimaryThreatIndex, 750.0, _, vecTarget);
 				npc.FaceTowards(vecTarget, 20000.0);
 				npc.PlayMeleeSound();
+				
 				float dmg = 200.0;
 				npc.FireRocket(vecTarget, dmg, 750.0);
+				
 				npc.m_flNextMeleeAttack = GameTime + 0.2;
 				npc.m_flReloadIn = GameTime + 1.75;
 				npc.m_iAmmo--;

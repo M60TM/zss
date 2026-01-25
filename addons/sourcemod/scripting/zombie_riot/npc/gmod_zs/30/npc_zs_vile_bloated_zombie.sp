@@ -61,6 +61,13 @@ static any ClotSummon(int client, float vecPos[3], float vecAng[3], int team)
 
 methodmap VileBloatedZombie < CClotBody
 {
+	property bool m_bElite
+	{
+		public get()
+		{
+			return this.m_iMedkitAnnoyance == 1;
+		}
+	}
 	public void PlayIdleSound() {
 		if(this.m_flNextIdleSound > GetGameTime(this.index))
 			return;
@@ -96,7 +103,7 @@ methodmap VileBloatedZombie < CClotBody
 	
 	public VileBloatedZombie(float vecPos[3], float vecAng[3], int ally)
 	{
-		VileBloatedZombie npc = view_as<VileBloatedZombie>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.25", "650", ally, false));
+		VileBloatedZombie npc = view_as<VileBloatedZombie>(CClotBody(vecPos, vecAng, "models/zombie_riot/gmod_zs/zs_zombie_models_1_1.mdl", "1.25", "30000", ally, false));
 		
 		i_NpcWeight[npc.index] = 1;
 		
@@ -213,9 +220,10 @@ public void VileBloatedZombie_ClotThink(int iNPC)
 						{
 							{
 								if(!ShouldNpcDealBonusDamage(target))
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 36.8, DMG_CLUB, -1, _, vecHit);
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 350.0, DMG_CLUB, -1, _, vecHit);
 								else
-									SDKHooks_TakeDamage(target, npc.index, npc.index, 58.9, DMG_CLUB, -1, _, vecHit);					
+									SDKHooks_TakeDamage(target, npc.index, npc.index, 1000.0, DMG_CLUB, -1, _, vecHit);
+									Elemental_AddPheromoneDamage(target, npc.index, npc.index ? 10 : 10);
 							}
 							
 							npc.PlayMeleeHitSound();
@@ -255,4 +263,11 @@ public void VileBloatedZombie_NPCDeath(int entity)
 	{
 		npc.PlayDeathSound();	
 	}
+	float vecMe[3]; WorldSpaceCenter(npc.index, vecMe);
+	Explode_Logic_Custom(40.0, npc.index, npc.index, -1, vecMe, 200.0, 1.0, _, true, 15, _, _, VileBloatedZombie_ExplodePost);
+}
+
+static void VileBloatedZombie_ExplodePost(int attacker, int victim, float damage, int weapon)
+{
+	Elemental_AddPheromoneDamage(victim, attacker, view_as<VileBloatedZombie>(attacker).m_bElite ? 15 : 12);
 }
