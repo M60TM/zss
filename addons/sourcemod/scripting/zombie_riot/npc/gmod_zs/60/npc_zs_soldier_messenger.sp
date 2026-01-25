@@ -335,7 +335,20 @@ public Action InfectedMessenger_OnTakeDamage(int victim, int &attacker, int &inf
 		}
 		CPrintToChatAll("{green}감염된 전령병{default}: 젠장 기습이다! 지금 당장 여기에 지원이 필요하다!");
 	}
-	
+	if(RoundToCeil(damage) >= GetEntProp(npc.index, Prop_Data, "m_iHealth"))
+	{
+		switch(GetRandomInt(0,1))
+		{
+			case 0:
+			{
+				CPrintToChatAll("{green}감염된 전령병{crimson}: 내일이면 전역인데...");
+			}
+			case 1:
+			{
+				CPrintToChatAll("{green}감염된 전령병{default}: 말뚝박기 싫은데..");
+			}
+		}
+	}
 	return Plugin_Changed;
 }
 static void Spawn_Chaos(InfectedMessenger npc)
@@ -357,7 +370,8 @@ static void Spawn_Chaos(InfectedMessenger npc)
 		SetEntProp(spawn_index, Prop_Data, "m_iHealth", maxhealth);
 		SetEntProp(spawn_index, Prop_Data, "m_iMaxHealth", maxhealth);
 	}
-	spawn_index = NPC_CreateByName("npc_zs_stranger", npc.index, pos, ang, GetTeam(npc.index));
+	maxhealth= (heck*5);
+	spawn_index = NPC_CreateByName("npc_random_zombie", npc.index, pos, ang, GetTeam(npc.index));
 	NpcAddedToZombiesLeftCurrently(spawn_index, true);
 	if(spawn_index > MaxClients)
 	{
@@ -365,7 +379,8 @@ static void Spawn_Chaos(InfectedMessenger npc)
 		SetEntProp(spawn_index, Prop_Data, "m_iHealth", maxhealth);
 		SetEntProp(spawn_index, Prop_Data, "m_iMaxHealth", maxhealth);
 	}
-	spawn_index = NPC_CreateByName("npc_zs_stranger", npc.index, pos, ang, GetTeam(npc.index));
+	maxhealth= (heck*5);
+	spawn_index = NPC_CreateByName("npc_random_zombie", npc.index, pos, ang, GetTeam(npc.index));
 	NpcAddedToZombiesLeftCurrently(spawn_index, true);
 	if(spawn_index > MaxClients)
 	{
@@ -380,18 +395,6 @@ static void ClotDeath(int entity)
 	InfectedMessenger npc = view_as<InfectedMessenger>(entity);
 	if(!npc.m_bGib)
 		npc.PlayDeathSound();
-	
-	switch(GetRandomInt(0,1))
-	{
-		case 0:
-		{
-			CPrintToChatAll("{green}감염된 전령병{crimson}: 내일이면 전역인데...");
-		}
-		case 1:
-		{
-			CPrintToChatAll("{green}감염된 전령병{default}: 말뚝박기 싫은데..");
-		}
-	}
 	
 	SpawnMoney(npc.index);
 	if(IsValidEntity(npc.m_iWearable1))

@@ -1229,6 +1229,7 @@ void NPC_ConfigSetup()
 	ZSVILEPoisonheadcrabZombie_OnMapStart_NPC();
 	StrangPyro_OnMapStart_NPC();
 	InfectedMessengerOnMapStart();
+	InfectedHazardous_OnMapStart_NPC();
 	Allymedic_OnMapStart_NPC();
 	Allysoldier_OnMapStart_NPC();
 	Allyheavy_OnMapStart_NPC();
@@ -2660,6 +2661,7 @@ Action NpcSpecificOnTakeDamage(int victim, int &attacker, int &inflictor, float 
 #include "npc/gmod_zs/60/npc_zs_vile_poisonheadcrab_zombie.sp"
 #include "npc/gmod_zs/60/npc_zs_stranger.sp"
 #include "npc/gmod_zs/60/npc_zs_soldier_messenger.sp"
+#include "npc/gmod_zs/60/npc_zs_ihbc.sp"
 #include "npc/gmod_zs/npc_zs_zmain.sp"
 #include "npc/gmod_zs/special/npc_zs_flesh_creeper.sp"
 #include "npc/gmod_zs/special/npc_zs_nest.sp"

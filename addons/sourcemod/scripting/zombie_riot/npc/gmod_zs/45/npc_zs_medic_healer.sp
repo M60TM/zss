@@ -132,10 +132,6 @@ methodmap ZSMedicHealer < CClotBody
 		SetVariantString("1.0");
 		AcceptEntityInput(npc.m_iWearable3, "SetModelScale");
 		
-		npc.m_iWearable2	= npc.EquipItem("head", "models/player/items/medic/hwn_medic_hat.mdl");
-		SetVariantString("1.0");
-		AcceptEntityInput(npc.m_iWearable2, "SetModelScale");
-		
 		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
 		npc.StartPathing();
 		

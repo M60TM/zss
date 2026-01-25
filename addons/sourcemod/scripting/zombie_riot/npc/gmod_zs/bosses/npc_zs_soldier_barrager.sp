@@ -302,43 +302,41 @@ static void Internal_ClotThink(int iNPC)
             npc.SetGoalVector(vBackoffPos, true);
         }
     }
-    else if(flDistanceToTarget < 120000 && npc.m_iAmmo > 0) // 거리 체크(flDistanceToTarget < 120000) 제거
-	{
-		npc.m_flSpeed = 270.0;
-		fl_ruina_in_combat_timer[npc.index] = 2.5 + GameTime;
-		
-		int Enemy_I_See = Can_I_See_Enemy(npc.index, PrimaryThreatIndex);
-		
-		if(IsValidEnemy(npc.index, Enemy_I_See))
-		{	
-			// --- 공격 중 후퇴 로직 추가 ---
-			float vBackoffPos[3];
-			// 적을 바라보면서 뒤로 물러나는 좌표 계산
-			BackoffFromOwnPositionAndAwayFromEnemy(npc, PrimaryThreatIndex, _, vBackoffPos);
-			npc.SetGoalVector(vBackoffPos, true);
-			npc.StartPathing();
-			// --------------------------
+    else if(flDistanceToTarget < 1080000 && npc.m_iAmmo > 0) 
+    {
+        npc.m_flSpeed = 270.0;
+        fl_ruina_in_combat_timer[npc.index] = 2.5 + GameTime;
+        
+        int Enemy_I_See = Can_I_See_Enemy(npc.index, PrimaryThreatIndex);
+        
+        if(IsValidEnemy(npc.index, Enemy_I_See))
+        {	
+            // [추가/수정] 만약 적과의 거리가 원래 사정거리(120,000)보다 가까우면 뒤로 물러나며 공격
+            if(flDistanceToTarget < 120000)
+            {
+                float vBackoffPos[3];
+                BackoffFromOwnPositionAndAwayFromEnemy(npc, PrimaryThreatIndex, _, vBackoffPos);
+                npc.SetGoalVector(vBackoffPos, true);
+            }
+            
+            npc.StartPathing();
 
-			if(npc.m_flNextMeleeAttack < GameTime)
-			{
-				npc.AddGesture("ACT_MP_ATTACK_STAND_PRIMARY");
-				PredictSubjectPositionForProjectiles(npc, PrimaryThreatIndex, 750.0, _, vecTarget);
-				npc.FaceTowards(vecTarget, 20000.0);
-				npc.PlayMeleeSound();
-				
-				float dmg = 200.0;
-				npc.FireRocket(vecTarget, dmg, 750.0);
-				
-				npc.m_flNextMeleeAttack = GameTime + 0.2;
-				npc.m_flReloadIn = GameTime + 1.75;
-				npc.m_iAmmo--;
-			}
-		}
-		else
-		{
-			npc.StartPathing();
-		}
-	}
+            if(npc.m_flNextMeleeAttack < GameTime)
+            {
+                npc.AddGesture("ACT_MP_ATTACK_STAND_PRIMARY");
+                PredictSubjectPositionForProjectiles(npc, PrimaryThreatIndex, 750.0, _, vecTarget);
+                npc.FaceTowards(vecTarget, 20000.0);
+                npc.PlayMeleeSound();
+                
+                float dmg = 200.0;
+                npc.FireRocket(vecTarget, dmg, 750.0); // 로켓 발사 
+                
+                npc.m_flNextMeleeAttack = GameTime + 0.2;
+                npc.m_flReloadIn = GameTime + 1.75;
+                npc.m_iAmmo--;
+            }
+        }
+    }
 	else
 	{
 		npc.StartPathing();

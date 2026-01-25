@@ -6294,7 +6294,6 @@ void StatusEffects_Explainelemental()
 	data.Slot						= 0;
 	data.SlotPriority				= 0;
 	StatusEffect_AddGlobal(data);
-	
 	strcopy(data.BuffName, sizeof(data.BuffName), "Pheromone Elemental Damage");
 	strcopy(data.HudDisplay, sizeof(data.HudDisplay), " ");
 	strcopy(data.AboveEnemyDisplay, sizeof(data.AboveEnemyDisplay), "");
@@ -6307,7 +6306,6 @@ void StatusEffects_Explainelemental()
 	data.Slot						= 0;
 	data.SlotPriority				= 0;
 	StatusEffect_AddGlobal(data);
-	
 	strcopy(data.BuffName, sizeof(data.BuffName), "Nervous Impairment Elemental Damage");
 	strcopy(data.HudDisplay, sizeof(data.HudDisplay), " ");
 	strcopy(data.AboveEnemyDisplay, sizeof(data.AboveEnemyDisplay), "");

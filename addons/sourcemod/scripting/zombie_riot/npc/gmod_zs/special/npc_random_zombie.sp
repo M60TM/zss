@@ -105,7 +105,7 @@ void ZombieSummonRaidboss(int ZombieSummonbase)
 	SameZombieDisallow[0] = true;
 	while(SameZombieDisallow[NumberRand])
 	{
-		NumberRand = GetRandomInt(1,7);
+		NumberRand = GetRandomInt(1,8);
 	}
 	SameZombieDisallow[NumberRand] = true;
 	switch(NumberRand)
@@ -113,34 +113,42 @@ void ZombieSummonRaidboss(int ZombieSummonbase)
 		case 1:
 		{
 			PluginName = "npc_zs_poisonzombie_fortified_giant";	
+			enemy.Is_Boss = 1;
 		}
 		case 2:
 		{
-			PluginName = "npc_zs_the_shit_slapper";	
+			PluginName = "npc_zs_the_shit_slapper";
+			enemy.Is_Boss = 1;
 		}
 		case 3:
 		{
-			PluginName = "npc_zs_bastardzine";	
+			PluginName = "npc_zs_bastardzine";
+			enemy.Is_Boss = 1;
 		}
 		case 4:
 		{
-			PluginName = "npc_zs_butcher";	
+			PluginName = "npc_zs_butcher";
+			enemy.Is_Boss = 1;
 		}
 		case 5:
 		{
-			PluginName = "npc_zmain_headcrabzombie";	
+			PluginName = "npc_zmain_headcrabzombie";
+			enemy.Is_Boss = 1;
 		}
 		case 6:
 		{
 			PluginName = "npc_zmain_poisonzombie";
+			enemy.Is_Boss = 1;
 		}
 		case 7:
 		{
 			PluginName = "npc_zs_amplification";
+			enemy.Is_Boss = 1;
 		}
 		case 8:
 		{
 			PluginName = "npc_zs_howler";
+			enemy.Is_Boss = 1;
 		}
 	}
 	Format(enemy.Data, sizeof(enemy.Data), "%s",CharData);

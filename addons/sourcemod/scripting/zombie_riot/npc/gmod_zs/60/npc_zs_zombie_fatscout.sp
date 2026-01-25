@@ -249,7 +249,6 @@ static int InfectedFatScoutSelfDefense(InfectedFatScout npc, float gameTime, int
 							damageDealt *= 8.0;
 
 						SDKHooks_TakeDamage(target, npc.index, npc.index, damageDealt, DMG_BULLET, -1, _, vecHit);
-						IncreaseEntityDamageTakenBy(target, 0.1, 3.5, true);
 					}
 				}
 				delete swingTrace;
