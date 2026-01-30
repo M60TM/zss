@@ -127,7 +127,7 @@ methodmap StoneAgeMaker < CClotBody
 		npc.m_iWearable5	= npc.EquipItem("head", "models/workshop/player/items/soldier/sum23_stealth_bomber_style1/sum23_stealth_bomber_style1.mdl");
 
 		SetEntProp(npc.m_iWearable1, Prop_Send, "m_nSkin", skin);
-		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", skin);
+		SetEntProp(npc.m_iWearable2, Prop_Send, "m_nSkin", 1);
 		SetEntProp(npc.m_iWearable3, Prop_Send, "m_nSkin", 1);
 		SetEntProp(npc.m_iWearable4, Prop_Send, "m_nSkin", 1);
 		SetEntProp(npc.m_iWearable5, Prop_Send, "m_nSkin", 1);

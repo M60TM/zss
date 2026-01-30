@@ -261,6 +261,30 @@ static char g_30wave[][] = {
 	"npc_zombie_demo_main",
 	"npc_zombie_heavy_grave",
 };
+static char g_40wave[][] = {
+	"npc_zs_kamikaze_demo",
+	"npc_zs_medic_healer",
+	"npc_zs_huntsman",
+	"npc_zs_zombie_demoknight",
+	"npc_zs_zombie_engineer",
+	"npc_zs_zombie_heavy",
+	"npc_zs_zombie_scout",
+	"npc_zs_zombie_sniper_jarate",
+	"npc_zs_zombie_soldier",
+	"npc_zs_zombie_soldier_pickaxe",
+	"npc_zs_zombie_spy",
+	"npc_zs_cleaner",
+	"npc_zs_eradicator",
+	"npc_zs_firefighter",
+	"npc_zombine",
+	"npc_zs_medic_main",
+	"npc_zs_mlsm",
+	"npc_zs_sam",
+	"npc_zs_sniper",
+	"npc_zs_zombie_breadmonster",
+	"npc_zs_zombie_fatscout",
+	"npc_zs_zombie_fatspy",
+};
 
 public void Nest_ClotThink(int iNPC)
 {
@@ -329,12 +353,12 @@ public void Nest_ClotThink(int iNPC)
 					IncreaseSpawnRates *= 0.5; //way slower.
 				}
 				
-				if(i_currentwave[iNPC] < 10) {
+				if(i_currentwave[iNPC] < 15) {
 					int idx = GetRandomInt(0, sizeof(g_10wave) - 1);
 					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_10wave[idx]);
 					//IncreaseSpawnRates *= 0.8;
 				} 
-				else if(i_currentwave[iNPC] < 20) {
+				else if(i_currentwave[iNPC] < 28) {
 					int idx = GetRandomInt(0, sizeof(g_20wave) - 1);
 					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_20wave[idx]);
 					//IncreaseSpawnRates *= 0.8;
@@ -343,7 +367,11 @@ public void Nest_ClotThink(int iNPC)
 				{
 					int idx = GetRandomInt(0, sizeof(g_30wave) - 1);
 					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_30wave[idx]);
-					//IncreaseSpawnRates *= 0.8;
+				}
+				else 
+				{
+					int idx = GetRandomInt(0, sizeof(g_40wave) - 1);
+					strcopy(EnemyToSpawn, sizeof(EnemyToSpawn), g_40wave[idx]);
 				}
 				
 				if(Rogue_Mode())
