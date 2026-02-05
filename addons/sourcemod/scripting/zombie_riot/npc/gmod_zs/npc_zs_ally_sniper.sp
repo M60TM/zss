@@ -119,6 +119,11 @@ methodmap AllySniper < CClotBody
 		b_NpcIsInvulnerable[npc.index] = true;
 		npc.m_bScalesWithWaves = false;
 		
+		npc.m_iTeamGlow = TF2_CreateGlow(npc.index);
+		npc.m_bTeamGlowDefault = false;
+		SetVariantColor(view_as<int>({255, 255, 255, 255}));
+		AcceptEntityInput(npc.m_iTeamGlow, "SetGlowColor");
+		
 		if(npc.m_bScalesWithWaves)
 		{
 			SetEntityRenderMode(npc.index, RENDER_TRANSCOLOR);

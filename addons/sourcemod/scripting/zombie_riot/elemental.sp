@@ -1348,7 +1348,10 @@ static void Zombie_Spawning(int entity, int count)
 		//it was the same bug alaxios had, in this case, it has to be reversed.
 		health = RoundToNearest(float(health) / MultiGlobalHealth);
 	}
-	
+	if(health > 30000)
+	{
+		health = 30000;
+	}
 	Enemy enemy;
 	enemy.Index = NPC_GetByPlugin(name);
 	enemy.Health = health;
